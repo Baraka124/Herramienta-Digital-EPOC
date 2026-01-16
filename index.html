@@ -26,7 +26,6 @@
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
     
     <style>
         /* ===== CSS RESET & VARIABLES ===== */
@@ -511,6 +510,79 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+        
+        /* ===== QUESTION STYLES ===== */
+        .question-item {
+            margin-bottom: var(--space-lg);
+            padding: var(--space-md);
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-md);
+        }
+        
+        .question-text {
+            font-size: 1.1rem;
+            margin-bottom: var(--space-md);
+            color: var(--text-primary);
+        }
+        
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: var(--space-sm);
+        }
+        
+        .option-btn {
+            padding: var(--space-md);
+            background: rgba(148, 163, 184, 0.1);
+            border: 2px solid transparent;
+            border-radius: var(--radius-sm);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .option-btn:hover {
+            background: rgba(14, 165, 233, 0.1);
+            border-color: var(--primary-blue);
+        }
+        
+        .option-btn.selected {
+            background: rgba(14, 165, 233, 0.2);
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+        }
+        
+        .slider-container {
+            margin: var(--space-md) 0;
+        }
+        
+        .cat-slider {
+            width: 100%;
+            height: 8px;
+            -webkit-appearance: none;
+            background: linear-gradient(to right, var(--excellent), var(--good), var(--moderate), var(--poor), var(--severe));
+            border-radius: 4px;
+            outline: none;
+        }
+        
+        .cat-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border: 3px solid var(--primary-blue);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: var(--space-xs);
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
     </style>
 </head>
 <body>
@@ -615,10 +687,10 @@
                     <div class="assessment-step active" id="step1">
                         <h2>Breathlessness Scale (mMRC)</h2>
                         <div class="card">
-                            <p>Select the statement that best describes your shortness of breath:</p>
+                            <p class="question-text">Select the statement that best describes your shortness of breath:</p>
                             <div id="mmrcOptions"></div>
                         </div>
-                        <button class="btn btn-primary" id="nextStep1">Continue</button>
+                        <button class="btn btn-primary" id="nextStep1" disabled>Continue</button>
                     </div>
 
                     <!-- Step 2: CAT -->
@@ -626,7 +698,7 @@
                         <h2>CAT Questionnaire</h2>
                         <div class="card" id="catQuestions"></div>
                         <button class="btn btn-secondary" id="prevStep2">Back</button>
-                        <button class="btn btn-primary" id="nextStep2">Continue</button>
+                        <button class="btn btn-primary" id="nextStep2" disabled>Continue</button>
                     </div>
 
                     <!-- Step 3: GesEPOC -->
@@ -634,7 +706,7 @@
                         <h2>Clinical Assessment</h2>
                         <div class="card" id="gesepocQuestions"></div>
                         <button class="btn btn-secondary" id="prevStep3">Back</button>
-                        <button class="btn btn-primary" id="nextStep3">View Results</button>
+                        <button class="btn btn-primary" id="nextStep3" disabled>View Results</button>
                     </div>
 
                     <!-- Results -->
@@ -707,6 +779,133 @@
         // Single HTML file with Patient ↔ Clinician interfaces
         // ============================================
 
+        // Clinical Database with actual questions
+        const ClinicalDatabase = {
+            mMRC: [
+                {
+                    value: 0,
+                    text: "I only get breathless with strenuous exercise",
+                    description: "No shortness of breath except with strenuous exercise"
+                },
+                {
+                    value: 1,
+                    text: "I get short of breath when hurrying on level ground or walking up a slight hill",
+                    description: "Shortness of breath when hurrying or walking up a slight hill"
+                },
+                {
+                    value: 2,
+                    text: "On level ground, I walk slower than people of the same age because of breathlessness, or I have to stop for breath when walking at my own pace",
+                    description: "Walks slower than people of same age due to breathlessness"
+                },
+                {
+                    value: 3,
+                    text: "I stop for breath after walking about 100 meters or after a few minutes on level ground",
+                    description: "Stops for breath after walking about 100 meters"
+                },
+                {
+                    value: 4,
+                    text: "I am too breathless to leave the house or I get breathless when dressing or undressing",
+                    description: "Too breathless to leave house or when dressing"
+                }
+            ],
+            
+            CAT: [
+                {
+                    id: 1,
+                    question: "I never cough",
+                    opposite: "I cough all the time"
+                },
+                {
+                    id: 2,
+                    question: "I have no phlegm (mucus) in my chest at all",
+                    opposite: "My chest is full of phlegm"
+                },
+                {
+                    id: 3,
+                    question: "My chest does not feel tight at all",
+                    opposite: "My chest feels very tight"
+                },
+                {
+                    id: 4,
+                    question: "When I walk up a hill or one flight of stairs I am not breathless",
+                    opposite: "When I walk up a hill or one flight of stairs I am very breathless"
+                },
+                {
+                    id: 5,
+                    question: "I am not limited doing any activities at home",
+                    opposite: "I am very limited doing activities at home"
+                },
+                {
+                    id: 6,
+                    question: "I am confident leaving my home despite my lung condition",
+                    opposite: "I am not at all confident leaving my home because of my lung condition"
+                },
+                {
+                    id: 7,
+                    question: "I sleep soundly",
+                    opposite: "I don't sleep soundly because of my lung condition"
+                },
+                {
+                    id: 8,
+                    question: "I have lots of energy",
+                    opposite: "I have no energy at all"
+                }
+            ],
+            
+            GesEPOC: [
+                {
+                    id: "stability",
+                    question: "How have you been since your last visit?",
+                    options: [
+                        { value: "better", label: "Better" },
+                        { value: "same", label: "Similar/Stable" },
+                        { value: "worse", label: "Worse" }
+                    ]
+                },
+                {
+                    id: "exacerbations",
+                    question: "Have you had any COPD exacerbations in the last 3 months?",
+                    options: [
+                        { value: "no", label: "No exacerbations" },
+                        { value: "yes", label: "Yes, one or more" }
+                    ]
+                },
+                {
+                    id: "sputum",
+                    question: "What is the color of your sputum?",
+                    options: [
+                        { value: "clear", label: "Clear/No sputum" },
+                        { value: "colored", label: "Colored/Yellow/Green" }
+                    ]
+                },
+                {
+                    id: "rescue",
+                    question: "How often do you use rescue medication?",
+                    options: [
+                        { value: "low", label: "< 3 times per week" },
+                        { value: "high", label: "≥ 3 times per week" }
+                    ]
+                },
+                {
+                    id: "activity",
+                    question: "Daily physical activity level:",
+                    options: [
+                        { value: "adequate", label: "≥ 30 minutes per day" },
+                        { value: "low", label: "< 30 minutes per day" }
+                    ]
+                },
+                {
+                    id: "fev1",
+                    question: "FEV₁ (% predicted):",
+                    options: [
+                        { value: ">=50", label: "≥ 50%" },
+                        { value: "<50", label: "< 50%" },
+                        { value: "unknown", label: "Unknown" }
+                    ]
+                }
+            ]
+        };
+
         // Offline Database (IndexedDB)
         class OfflineDatabase {
             constructor() {
@@ -737,7 +936,7 @@
                             });
                             store.createIndex('consent', 'consent.shareWithClinician');
                             store.createIndex('timestamp', 'timestamp');
-                            store.createIndex('status', 'results.gesepoc.color');
+                            store.createIndex('status', 'results.cat.color');
                         }
                         
                         // Assessments store
@@ -761,24 +960,13 @@
             }
 
             async saveAssessment(assessment) {
-                const tx = this.db.transaction(['patients', 'assessments'], 'readwrite');
-                const patientsStore = tx.objectStore('patients');
-                const assessmentsStore = tx.objectStore('assessments');
+                const tx = this.db.transaction(['patients'], 'readwrite');
+                const store = tx.objectStore('patients');
                 
-                // Save patient record
-                const patientId = await new Promise((resolve) => {
-                    const request = patientsStore.put(assessment);
+                return new Promise((resolve) => {
+                    const request = store.put(assessment);
                     request.onsuccess = () => resolve(request.result);
                 });
-                
-                // Save assessment record
-                assessment.patientId = patientId;
-                await new Promise((resolve) => {
-                    const request = assessmentsStore.put(assessment);
-                    request.onsuccess = () => resolve();
-                });
-                
-                return patientId;
             }
 
             async getPatientsForClinician() {
@@ -792,31 +980,29 @@
                 });
             }
 
-            async getPatientAssessments(patientId) {
+            async getAllPatients() {
                 return new Promise((resolve) => {
-                    const tx = this.db.transaction(['assessments'], 'readonly');
-                    const store = tx.objectStore('assessments');
-                    const index = store.index('patientId');
-                    
-                    const request = index.getAll(IDBKeyRange.only(patientId));
+                    const tx = this.db.transaction(['patients'], 'readonly');
+                    const store = tx.objectStore('patients');
+                    const request = store.getAll();
                     request.onsuccess = () => resolve(request.result || []);
                 });
             }
 
             async deletePatient(patientId) {
-                const tx = this.db.transaction(['patients', 'assessments'], 'readwrite');
-                const patientsStore = tx.objectStore('patients');
-                const assessmentsStore = tx.objectStore('assessments');
+                const tx = this.db.transaction(['patients'], 'readwrite');
+                const store = tx.objectStore('patients');
+                store.delete(patientId);
                 
-                // Delete patient
-                patientsStore.delete(patientId);
-                
-                // Delete all assessments for this patient
-                const index = assessmentsStore.index('patientId');
-                const request = index.getAllKeys(IDBKeyRange.only(patientId));
-                request.onsuccess = () => {
-                    request.result.forEach(key => assessmentsStore.delete(key));
-                };
+                return new Promise((resolve) => {
+                    tx.oncomplete = () => resolve();
+                });
+            }
+            
+            async clearAllData() {
+                const tx = this.db.transaction(['patients'], 'readwrite');
+                const store = tx.objectStore('patients');
+                store.clear();
                 
                 return new Promise((resolve) => {
                     tx.oncomplete = () => resolve();
@@ -830,11 +1016,19 @@
                 this.db = new OfflineDatabase();
                 this.currentStep = 1;
                 this.currentMode = 'patient';
-                this.assessmentData = null;
-                this.patientConsent = {
-                    assessment: false,
-                    saveLocal: false,
-                    shareWithClinician: false
+                this.assessmentData = {
+                    consent: {
+                        assessment: false,
+                        saveLocal: true,
+                        shareWithClinician: false
+                    },
+                    timestamp: null,
+                    steps: {
+                        mmrc: null,
+                        cat: {},
+                        gesepoc: {}
+                    },
+                    results: null
                 };
                 
                 this.init();
@@ -854,6 +1048,9 @@
                 if (window.location.hash === '#clinician') {
                     this.switchMode('clinician');
                 }
+                
+                // Initialize UI state
+                document.getElementById('startAssessment').disabled = true;
             }
 
             setupEventListeners() {
@@ -861,27 +1058,39 @@
                 document.querySelectorAll('.nav-item').forEach(item => {
                     item.addEventListener('click', () => {
                         const mode = item.dataset.mode;
-                        if (mode) this.switchMode(mode);
+                        if (mode) {
+                            this.switchMode(mode);
+                        } else if (item.id === 'installApp') {
+                            this.installPWA();
+                        } else if (item.id === 'consentSettings') {
+                            this.showConsentSettings();
+                        } else if (item.id === 'exportData') {
+                            this.exportAllData();
+                        }
                     });
                 });
 
                 // Consent toggles
-                document.getElementById('consentAssess').addEventListener('change', (e) => {
-                    this.patientConsent.assessment = e.target.checked;
+                const consentAssess = document.getElementById('consentAssess');
+                const consentSave = document.getElementById('consentSave');
+                const consentShare = document.getElementById('consentShare');
+                
+                consentAssess.addEventListener('change', (e) => {
+                    this.assessmentData.consent.assessment = e.target.checked;
                     document.getElementById('startAssessment').disabled = !e.target.checked;
                 });
 
-                document.getElementById('consentSave').addEventListener('change', (e) => {
-                    this.patientConsent.saveLocal = e.target.checked;
+                consentSave.addEventListener('change', (e) => {
+                    this.assessmentData.consent.saveLocal = e.target.checked;
                 });
 
-                document.getElementById('consentShare').addEventListener('change', (e) => {
-                    this.patientConsent.shareWithClinician = e.target.checked;
+                consentShare.addEventListener('change', (e) => {
+                    this.assessmentData.consent.shareWithClinician = e.target.checked;
                 });
 
                 // Assessment navigation
                 document.getElementById('startAssessment').addEventListener('click', () => {
-                    if (this.patientConsent.assessment) {
+                    if (this.assessmentData.consent.assessment) {
                         this.startAssessment();
                     }
                 });
@@ -905,9 +1114,6 @@
                     document.getElementById('resultsModal').classList.remove('active');
                 });
 
-                // Install PWA
-                document.getElementById('installApp').addEventListener('click', () => this.installPWA());
-
                 // Mobile menu
                 document.getElementById('menuToggle').addEventListener('click', () => {
                     document.getElementById('sidebar').classList.toggle('active');
@@ -929,7 +1135,7 @@
                 
                 // Update UI
                 document.getElementById('patient-mode').style.display = mode === 'patient' ? 'block' : 'none';
-                document.getElementById('clinician-mode').style.display = mode === 'clinician' ? 'none' : 'block';
+                document.getElementById('clinician-mode').style.display = mode === 'clinician' ? 'block' : 'none';
                 
                 // Update mobile menu
                 document.getElementById('sidebar').classList.remove('active');
@@ -937,51 +1143,88 @@
                 // Load data for clinician mode
                 if (mode === 'clinician') {
                     this.loadClinicianDashboard();
-                    document.getElementById('clinician-mode').style.display = 'block';
-                    document.getElementById('patient-mode').style.display = 'none';
-                } else {
-                    document.getElementById('clinician-mode').style.display = 'none';
-                    document.getElementById('patient-mode').style.display = 'block';
                 }
+                
+                // Update URL hash
+                window.location.hash = mode;
             }
 
             startAssessment() {
                 document.getElementById('welcomeScreen').classList.add('hidden');
                 document.getElementById('assessmentContainer').classList.remove('hidden');
                 
-                this.assessmentData = {
-                    consent: { ...this.patientConsent },
-                    timestamp: new Date().toISOString(),
-                    steps: {},
-                    results: null
-                };
-                
+                this.assessmentData.timestamp = new Date().toISOString();
+                this.currentStep = 1;
                 this.renderCurrentStep();
             }
 
             renderAssessmentSteps() {
-                // mMRC options
-                const mmrcOptions = [
-                    { value: 0, text: "No shortness of breath except with strenuous exercise", icon: "fa-running" },
-                    { value: 1, text: "Shortness of breath when hurrying on level ground or walking up a slight hill", icon: "fa-walking" },
-                    { value: 2, text: "Walks slower than people of same age due to breathlessness", icon: "fa-user-slash" },
-                    { value: 3, text: "Stops for breath after walking about 100 meters or after a few minutes", icon: "fa-ban" },
-                    { value: 4, text: "Too breathless to leave house or breathless when dressing", icon: "fa-home" }
-                ];
+                // Render mMRC options
+                const mmrcContainer = document.getElementById('mmrcOptions');
+                mmrcContainer.innerHTML = '';
                 
-                let html = '';
-                mmrcOptions.forEach(option => {
-                    html += `
-                        <div class="consent-option" onclick="app.selectMMRC(${option.value})">
-                            <i class="fas ${option.icon}"></i>
-                            <div>
-                                <strong>Grade ${option.value}</strong><br>
-                                <small>${option.text}</small>
+                ClinicalDatabase.mMRC.forEach(option => {
+                    const div = document.createElement('div');
+                    div.className = 'consent-option';
+                    div.innerHTML = `
+                        <i class="fas fa-${option.value <= 1 ? 'smile' : option.value <= 2 ? 'meh' : 'frown'}"></i>
+                        <div>
+                            <strong>Grade ${option.value}</strong><br>
+                            <small>${option.text}</small>
+                        </div>
+                    `;
+                    div.addEventListener('click', () => this.selectMMRC(option.value));
+                    mmrcContainer.appendChild(div);
+                });
+
+                // Render CAT questions
+                const catContainer = document.getElementById('catQuestions');
+                catContainer.innerHTML = '';
+                
+                ClinicalDatabase.CAT.forEach((q, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'question-item';
+                    div.innerHTML = `
+                        <p class="question-text">${q.question}</p>
+                        <div class="slider-container">
+                            <input type="range" min="0" max="5" value="0" 
+                                   class="cat-slider" data-question="${q.id}"
+                                   oninput="app.updateCATValue(${q.id}, this.value)">
+                            <div class="slider-labels">
+                                <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+                            </div>
+                            <div class="slider-labels">
+                                <span>${q.question}</span>
+                                <span>${q.opposite}</span>
+                            </div>
+                            <div style="text-align: center; margin-top: var(--space-sm);">
+                                <strong>Selected: </strong><span id="cat-value-${q.id}">0</span>/5
                             </div>
                         </div>
                     `;
+                    catContainer.appendChild(div);
                 });
-                document.getElementById('mmrcOptions').innerHTML = html;
+
+                // Render GesEPOC questions
+                const gesepocContainer = document.getElementById('gesepocQuestions');
+                gesepocContainer.innerHTML = '';
+                
+                ClinicalDatabase.GesEPOC.forEach(q => {
+                    const div = document.createElement('div');
+                    div.className = 'question-item';
+                    div.innerHTML = `
+                        <p class="question-text">${q.question}</p>
+                        <div class="options-grid" id="gesepoc-${q.id}">
+                            ${q.options.map(opt => `
+                                <button class="option-btn" data-value="${opt.value}" 
+                                        onclick="app.selectGesEPOC('${q.id}', '${opt.value}')">
+                                    ${opt.label}
+                                </button>
+                            `).join('')}
+                        </div>
+                    `;
+                    gesepocContainer.appendChild(div);
+                });
             }
 
             selectMMRC(value) {
@@ -993,6 +1236,34 @@
                     opt.style.background = '';
                 });
                 event.currentTarget.style.background = 'rgba(14, 165, 233, 0.2)';
+            }
+
+            updateCATValue(questionId, value) {
+                this.assessmentData.steps.cat[questionId] = parseInt(value);
+                document.getElementById(`cat-value-${questionId}`).textContent = value;
+                
+                // Enable next button if all CAT questions answered
+                const allAnswered = ClinicalDatabase.CAT.every(q => 
+                    this.assessmentData.steps.cat[q.id] !== undefined
+                );
+                document.getElementById('nextStep2').disabled = !allAnswered;
+            }
+
+            selectGesEPOC(questionId, value) {
+                this.assessmentData.steps.gesepoc[questionId] = value;
+                
+                // Visual feedback
+                const container = document.getElementById(`gesepoc-${questionId}`);
+                container.querySelectorAll('.option-btn').forEach(btn => {
+                    btn.classList.remove('selected');
+                });
+                event.currentTarget.classList.add('selected');
+                
+                // Enable next button if all GesEPOC questions answered
+                const allAnswered = ClinicalDatabase.GesEPOC.every(q => 
+                    this.assessmentData.steps.gesepoc[q.id] !== undefined
+                );
+                document.getElementById('nextStep3').disabled = !allAnswered;
             }
 
             nextStep() {
@@ -1016,43 +1287,122 @@
                 }
             }
 
+            renderCurrentStep() {
+                // Hide all steps
+                document.querySelectorAll('.assessment-step').forEach(step => {
+                    step.classList.remove('active');
+                });
+                
+                // Show current step
+                document.getElementById(`step${this.currentStep}`).classList.add('active');
+            }
+
             async calculateResults() {
-                // Mock calculations - replace with actual algorithms
-                const mmrc = this.assessmentData.steps.mmrc || 0;
+                // Calculate CAT total
+                const catScores = Object.values(this.assessmentData.steps.cat);
+                const catTotal = catScores.reduce((sum, score) => sum + (score || 0), 0);
                 
-                // Generate CAT score (mock)
-                const catScore = Math.min(40, Math.max(0, mmrc * 5 + Math.floor(Math.random() * 10)));
-                
-                // Determine status
-                let status, color, icon;
-                if (catScore <= 10) {
-                    status = "Low Impact"; color = "good"; icon = "fa-smile";
-                } else if (catScore <= 20) {
-                    status = "Medium Impact"; color = "moderate"; icon = "fa-meh";
-                } else if (catScore <= 30) {
-                    status = "High Impact"; color = "poor"; icon = "fa-frown";
+                // Determine CAT status
+                let catStatus, catColor, catIcon;
+                if (catTotal <= 10) {
+                    catStatus = "Low Impact"; catColor = "good"; catIcon = "fa-smile";
+                } else if (catTotal <= 20) {
+                    catStatus = "Medium Impact"; catColor = "moderate"; catIcon = "fa-meh";
+                } else if (catTotal <= 30) {
+                    catStatus = "High Impact"; catColor = "poor"; catIcon = "fa-frown";
                 } else {
-                    status = "Very High Impact"; color = "severe"; icon = "fa-dizzy";
+                    catStatus = "Very High Impact"; catColor = "severe"; catIcon = "fa-dizzy";
                 }
                 
-                // GesEPOC classification
-                const classifications = ["A", "B", "C", "D"];
-                const gesepocClass = classifications[Math.floor(Math.random() * 4)];
+                // Calculate GesEPOC classification (simplified algorithm)
+                let unfavorableCount = 0;
+                if (this.assessmentData.steps.gesepoc.stability === "worse") unfavorableCount++;
+                if (this.assessmentData.steps.gesepoc.exacerbations === "yes") unfavorableCount++;
+                if (this.assessmentData.steps.gesepoc.sputum === "colored") unfavorableCount++;
+                if (this.assessmentData.steps.gesepoc.rescue === "high") unfavorableCount++;
+                if (this.assessmentData.steps.gesepoc.activity === "low") unfavorableCount++;
+                if (this.assessmentData.steps.gesepoc.fev1 === "<50") unfavorableCount++;
+                if (this.assessmentData.steps.mmrc >= 2) unfavorableCount++;
+                if (catTotal >= 20) unfavorableCount++;
+                
+                let gesepocClass, gesepocInterpretation;
+                if (unfavorableCount <= 2) {
+                    gesepocClass = "A";
+                    gesepocInterpretation = "Controlled";
+                } else if (unfavorableCount <= 4) {
+                    gesepocClass = "B";
+                    gesepocInterpretation = "Partially Controlled";
+                } else if (unfavorableCount <= 6) {
+                    gesepocClass = "C";
+                    gesepocInterpretation = "Poorly Controlled";
+                } else {
+                    gesepocClass = "D";
+                    gesepocInterpretation = "Uncontrolled";
+                }
                 
                 this.assessmentData.results = {
-                    mmrc: { grade: mmrc, interpretation: mmrc === 0 ? "No dyspnea" : `Grade ${mmrc} dyspnea` },
-                    cat: { score: catScore, status, color, icon },
-                    gesepoc: { class: gesepocClass, color, interpretation: `Classification ${gesepocClass}` },
-                    timestamp: new Date().toLocaleString()
+                    cat: {
+                        score: catTotal,
+                        status: catStatus,
+                        color: catColor,
+                        icon: catIcon,
+                        maxScore: 40
+                    },
+                    mmrc: {
+                        grade: this.assessmentData.steps.mmrc,
+                        interpretation: `Grade ${this.assessmentData.steps.mmrc} dyspnea`
+                    },
+                    gesepoc: {
+                        class: gesepocClass,
+                        color: catColor, // Use same color scheme for consistency
+                        interpretation: gesepocInterpretation,
+                        unfavorableCount: unfavorableCount
+                    },
+                    timestamp: new Date().toLocaleString(),
+                    recommendations: this.generateRecommendations(catTotal, this.assessmentData.steps.mmrc, gesepocClass)
                 };
                 
                 // Save to database if consented
-                if (this.patientConsent.saveLocal) {
-                    await this.db.saveAssessment({
+                if (this.assessmentData.consent.saveLocal) {
+                    const patientData = {
                         ...this.assessmentData,
-                        consent: { ...this.patientConsent }
-                    });
+                        consent: { ...this.assessmentData.consent }
+                    };
+                    await this.db.saveAssessment(patientData);
                 }
+            }
+
+            generateRecommendations(catScore, mmrcGrade, gesepocClass) {
+                const recommendations = [];
+                
+                // CAT-based recommendations
+                if (catScore >= 25) {
+                    recommendations.push("High symptom burden detected. Consider optimizing maintenance therapy and referral to pulmonary rehabilitation.");
+                } else if (catScore >= 15) {
+                    recommendations.push("Moderate symptom impact. Regular follow-up recommended every 3-6 months.");
+                } else {
+                    recommendations.push("Low symptom impact. Continue current management with routine follow-up.");
+                }
+                
+                // mMRC-based recommendations
+                if (mmrcGrade >= 3) {
+                    recommendations.push("Severe dyspnea. Evaluate need for supplemental oxygen and consider pulmonary rehabilitation.");
+                } else if (mmrcGrade >= 2) {
+                    recommendations.push("Moderate dyspnea. Breathing techniques and pacing activities may be beneficial.");
+                }
+                
+                // GesEPOC-based recommendations
+                if (gesepocClass === "D") {
+                    recommendations.push("Poorly controlled COPD. Urgent clinical review and treatment optimization required.");
+                } else if (gesepocClass === "C") {
+                    recommendations.push("Suboptimal control. Consider step-up in therapy and close monitoring.");
+                }
+                
+                // General recommendations
+                recommendations.push("Review inhaler technique at next visit.");
+                recommendations.push("Monitor for exacerbations and seek early treatment.");
+                
+                return recommendations;
             }
 
             showResults() {
@@ -1079,12 +1429,9 @@
                     
                     <div class="pdf-recommendations">
                         <h4><i class="fas fa-lightbulb"></i> Clinical Insights</h4>
-                        <p>Based on your scores, consider discussing these points with your clinician:</p>
+                        <p>Based on your scores:</p>
                         <ul>
-                            <li>Regular follow-up visits every 3-6 months</li>
-                            <li>Pulmonary rehabilitation referral if CAT score > 20</li>
-                            <li>Inhaler technique review</li>
-                            <li>Smoking cessation support if applicable</li>
+                            ${results.recommendations.map(rec => `<li>${rec}</li>`).join('')}
                         </ul>
                     </div>
                 `;
@@ -1092,7 +1439,7 @@
                 document.getElementById('resultsDisplay').innerHTML = html;
                 
                 // Show QR generator if consented to share
-                if (this.patientConsent.shareWithClinician) {
+                if (this.assessmentData.consent.shareWithClinician) {
                     document.getElementById('qrGenerator').classList.add('active');
                 }
             }
@@ -1111,13 +1458,13 @@
                     note: "Patient consented to share with clinician"
                 };
                 
-                const qrString = JSON.stringify(qrData);
+                const qrString = JSON.stringify(qrData, null, 2);
                 
                 try {
                     // Clear previous QR
                     document.getElementById('qrcode').innerHTML = '';
                     
-                    // Generate QR code
+                    // Generate QR code using the QRCode library
                     QRCode.toCanvas(document.getElementById('qrcode'), qrString, {
                         width: 200,
                         margin: 2,
@@ -1125,12 +1472,24 @@
                             dark: '#0f172a',
                             light: '#ffffff'
                         }
+                    }, function(error) {
+                        if (error) {
+                            console.error('QR generation failed:', error);
+                            document.getElementById('qrcode').innerHTML = `
+                                <div style="background: white; padding: 20px; border-radius: 8px; color: black;">
+                                    <h4>QR Code Failed</h4>
+                                    <p>Data for sharing:</p>
+                                    <pre style="font-size: 10px;">${qrString}</pre>
+                                </div>
+                            `;
+                        }
                     });
                 } catch (error) {
                     console.error('QR generation failed:', error);
                     document.getElementById('qrcode').innerHTML = `
-                        <div style="background: white; padding: 20px; border-radius: 8px;">
-                            <pre>${qrString}</pre>
+                        <div style="background: white; padding: 20px; border-radius: 8px; color: black;">
+                            <h4>Data for Sharing</h4>
+                            <pre style="font-size: 12px;">${qrString}</pre>
                         </div>
                     `;
                 }
@@ -1151,9 +1510,9 @@
                     doc.setTextColor(100, 100, 100);
                     doc.text(`Generated: ${results.timestamp}`, 20, 30);
                     
-                    // Add patient info if available
-                    if (this.assessmentData.patientInfo) {
-                        doc.text(`Patient: ${this.assessmentData.patientInfo}`, 20, 40);
+                    // Patient consent note
+                    if (this.assessmentData.consent.shareWithClinician) {
+                        doc.text("✓ Patient consented to share with clinician", 20, 40);
                     }
                     
                     // Add scores in boxes
@@ -1168,7 +1527,8 @@
                     let y = 60;
                     
                     // CAT Score
-                    doc.setFillColor(...colors[results.cat.color]);
+                    const catColor = colors[results.cat.color] || colors.moderate;
+                    doc.setFillColor(...catColor);
                     doc.roundedRect(20, y, 55, 25, 3, 3, 'F');
                     doc.setTextColor(255, 255, 255);
                     doc.setFontSize(12);
@@ -1184,7 +1544,8 @@
                     doc.text(`${results.mmrc.grade}`, 85, y + 18);
                     
                     // GesEPOC
-                    doc.setFillColor(...colors[results.gesepoc.color]);
+                    const gesepocColor = colors[results.gesepoc.color] || colors.moderate;
+                    doc.setFillColor(...gesepocColor);
                     doc.roundedRect(140, y, 55, 25, 3, 3, 'F');
                     doc.text("GesEPOC", 145, y + 8);
                     doc.setFontSize(16);
@@ -1207,24 +1568,16 @@
                     // Recommendations
                     y += 15;
                     doc.setFontSize(12);
-                    doc.text("Recommendations:", 20, y);
+                    doc.text("Clinical Recommendations:", 20, y);
                     
                     y += 10;
-                    const recommendations = [
-                        "Regular follow-up every 3-6 months",
-                        "Consider pulmonary rehabilitation if symptoms impact daily life",
-                        "Review inhaler technique with healthcare provider",
-                        "Monitor for exacerbations and seek early treatment",
-                        "Maintain physical activity within tolerance"
-                    ];
-                    
-                    recommendations.forEach(rec => {
+                    results.recommendations.forEach((rec, index) => {
                         if (y > 250) {
                             doc.addPage();
                             y = 20;
                         }
                         doc.setFontSize(10);
-                        doc.text(`• ${rec}`, 25, y);
+                        doc.text(`${index + 1}. ${rec}`, 25, y);
                         y += 7;
                     });
                     
@@ -1237,8 +1590,8 @@
                     const timestamp = new Date().toISOString().slice(0, 19).replace(/[:]/g, '-');
                     doc.save(`COPD-Assessment-${timestamp}.pdf`);
                     
-                    // Show preview
-                    this.showPDFPreview(doc);
+                    // Show success message
+                    alert('PDF generated successfully!');
                     
                 } catch (error) {
                     console.error('PDF generation failed:', error);
@@ -1246,18 +1599,22 @@
                 }
             }
 
-            showPDFPreview(doc) {
-                // Convert PDF to data URL for preview
-                const pdfData = doc.output('datauristring');
-                document.getElementById('pdfPreview').innerHTML = `
-                    <iframe src="${pdfData}" width="100%" height="600" style="border: none;"></iframe>
-                `;
-                document.getElementById('pdfPreview').classList.remove('hidden');
-            }
-
             resetAssessment() {
                 this.currentStep = 1;
-                this.assessmentData = null;
+                this.assessmentData = {
+                    consent: {
+                        assessment: false,
+                        saveLocal: document.getElementById('consentSave').checked,
+                        shareWithClinician: document.getElementById('consentShare').checked
+                    },
+                    timestamp: null,
+                    steps: {
+                        mmrc: null,
+                        cat: {},
+                        gesepoc: {}
+                    },
+                    results: null
+                };
                 
                 // Reset UI
                 document.getElementById('assessmentContainer').classList.add('hidden');
@@ -1270,30 +1627,50 @@
                     step.classList.remove('active');
                 });
                 document.getElementById('step1').classList.add('active');
+                
+                // Reset buttons
+                document.getElementById('nextStep1').disabled = true;
+                document.getElementById('nextStep2').disabled = true;
+                document.getElementById('nextStep3').disabled = true;
+                
+                // Reset form elements
+                document.querySelectorAll('.cat-slider').forEach(slider => {
+                    slider.value = 0;
+                });
+                document.querySelectorAll('.option-btn').forEach(btn => {
+                    btn.classList.remove('selected');
+                });
+                document.querySelectorAll('#mmrcOptions .consent-option').forEach(opt => {
+                    opt.style.background = '';
+                });
             }
 
             async loadClinicianDashboard() {
-                const patients = await this.db.getPatientsForClinician();
+                const patients = await this.db.getAllPatients();
+                const consentedPatients = patients.filter(p => p.consent?.shareWithClinician);
                 
                 let html = '';
-                if (patients.length === 0) {
+                if (consentedPatients.length === 0) {
                     html = `
                         <div class="card">
                             <h3>No patients yet</h3>
                             <p>Patients who consent to share their results will appear here.</p>
+                            <p><small>Total assessments stored: ${patients.length}</small></p>
                         </div>
                     `;
                 } else {
-                    patients.forEach(patient => {
+                    consentedPatients.forEach(patient => {
                         const results = patient.results;
-                        const statusClass = results?.cat?.color || 'moderate';
-                        const statusText = results?.cat?.status || 'Not assessed';
+                        if (!results) return;
+                        
+                        const statusClass = results.cat?.color || 'moderate';
+                        const statusText = results.cat?.status || 'Not assessed';
                         
                         html += `
                             <div class="patient-card ${statusClass}" onclick="app.showPatientDetails(${patient.id})">
                                 <div class="patient-info">
                                     <div>
-                                        <strong>Assessment ${patient.id}</strong><br>
+                                        <strong>Assessment #${patient.id}</strong><br>
                                         <small>${new Date(patient.timestamp).toLocaleDateString()}</small>
                                     </div>
                                     <span class="patient-status status-${statusClass}">
@@ -1302,9 +1679,9 @@
                                 </div>
                                 <div class="patient-scores">
                                     <small>
-                                        CAT: ${results?.cat?.score || 'N/A'}/40 | 
-                                        mMRC: ${results?.mmrc?.grade || 'N/A'} | 
-                                        GesEPOC: ${results?.gesepoc?.class || 'N/A'}
+                                        CAT: ${results.cat?.score || 'N/A'}/40 | 
+                                        mMRC: ${results.mmrc?.grade || 'N/A'} | 
+                                        GesEPOC: ${results.gesepoc?.class || 'N/A'}
                                     </small>
                                 </div>
                             </div>
@@ -1315,7 +1692,7 @@
                 document.getElementById('patientsGrid').innerHTML = html;
                 
                 // Update statistics
-                this.updatePracticeStats(patients);
+                this.updatePracticeStats(consentedPatients);
             }
 
             updatePracticeStats(patients) {
@@ -1323,7 +1700,8 @@
                     total: patients.length,
                     byStatus: { good: 0, moderate: 0, poor: 0, severe: 0 },
                     avgCAT: 0,
-                    avgMMRC: 0
+                    avgMMRC: 0,
+                    uncontrolled: 0
                 };
                 
                 let totalCAT = 0, totalMMRC = 0, count = 0;
@@ -1331,7 +1709,8 @@
                 patients.forEach(patient => {
                     const results = patient.results;
                     if (results) {
-                        stats.byStatus[results.cat?.color || 'moderate']++;
+                        const status = results.cat?.color || 'moderate';
+                        stats.byStatus[status]++;
                         
                         if (results.cat?.score) {
                             totalCAT += results.cat.score;
@@ -1341,6 +1720,10 @@
                         if (results.mmrc?.grade !== undefined) {
                             totalMMRC += results.mmrc.grade;
                         }
+                        
+                        if (results.gesepoc?.class === 'D') {
+                            stats.uncontrolled++;
+                        }
                     }
                 });
                 
@@ -1348,85 +1731,204 @@
                 stats.avgMMRC = count > 0 ? (totalMMRC / count).toFixed(1) : 0;
                 
                 document.getElementById('practiceStats').innerHTML = `
-                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-md);">
-                        <div style="text-align: center;">
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-md);">
+                        <div style="text-align: center; padding: var(--space-sm); background: rgba(14, 165, 233, 0.1); border-radius: var(--radius-md);">
                             <h4>${stats.total}</h4>
                             <small>Total Patients</small>
                         </div>
-                        <div style="text-align: center;">
+                        <div style="text-align: center; padding: var(--space-sm); background: rgba(34, 197, 94, 0.1); border-radius: var(--radius-md);">
                             <h4>${stats.avgCAT}</h4>
                             <small>Avg CAT Score</small>
                         </div>
-                        <div style="text-align: center;">
+                        <div style="text-align: center; padding: var(--space-sm); background: rgba(245, 158, 11, 0.1); border-radius: var(--radius-md);">
                             <h4>${stats.avgMMRC}</h4>
                             <small>Avg mMRC</small>
                         </div>
-                        <div style="text-align: center;">
-                            <h4>${stats.byStatus.severe + stats.byStatus.poor}</h4>
-                            <small>High Risk</small>
+                        <div style="text-align: center; padding: var(--space-sm); background: rgba(239, 68, 68, 0.1); border-radius: var(--radius-md);">
+                            <h4>${stats.uncontrolled}</h4>
+                            <small>Uncontrolled</small>
                         </div>
                     </div>
                 `;
             }
 
             async showPatientDetails(patientId) {
-                // In a real app, you would fetch the complete patient data
-                // For now, show a mock detail view
+                const patients = await this.db.getAllPatients();
+                const patient = patients.find(p => p.id === patientId);
                 
+                if (!patient) return;
+                
+                const results = patient.results;
                 const modalContent = document.getElementById('modalContent');
+                
                 modalContent.innerHTML = `
                     <h2>Patient Assessment Details</h2>
                     <div class="card">
                         <h3>Results Summary</h3>
-                        <p>CAT Score: <strong>18/40</strong> (Medium Impact)</p>
-                        <p>mMRC Grade: <strong>2</strong> (Moderate dyspnea)</p>
-                        <p>GesEPOC Classification: <strong>B</strong></p>
+                        <p><strong>Date:</strong> ${new Date(patient.timestamp).toLocaleString()}</p>
+                        <p><strong>CAT Score:</strong> ${results?.cat?.score || 'N/A'}/40 (${results?.cat?.status || 'Not assessed'})</p>
+                        <p><strong>mMRC Grade:</strong> ${results?.mmrc?.grade || 'N/A'} (${results?.mmrc?.interpretation || ''})</p>
+                        <p><strong>GesEPOC Classification:</strong> ${results?.gesepoc?.class || 'N/A'} (${results?.gesepoc?.interpretation || ''})</p>
+                        <p><strong>Unfavorable Criteria:</strong> ${results?.gesepoc?.unfavorableCount || 'N/A'}/8</p>
                     </div>
                     <div class="card">
-                        <h3>Recommendations</h3>
+                        <h3>Clinical Recommendations</h3>
                         <ul>
-                            <li>Schedule follow-up in 3 months</li>
-                            <li>Consider pulmonary rehabilitation referral</li>
-                            <li>Review inhaler technique</li>
-                            <li>Monitor for exacerbations</li>
+                            ${results?.recommendations?.map(rec => `<li>${rec}</li>`).join('') || '<li>No specific recommendations available</li>'}
                         </ul>
                     </div>
-                    <button class="btn btn-primary" onclick="app.generatePatientPDF(${patientId})">
+                    <button class="btn btn-primary" onclick="app.generateClinicalReport(${patientId})">
                         <i class="fas fa-file-pdf"></i> Generate Clinical Report
+                    </button>
+                    <button class="btn btn-secondary" onclick="app.deletePatient(${patientId})" style="margin-left: var(--space-sm);">
+                        <i class="fas fa-trash"></i> Delete Record
                     </button>
                 `;
                 
                 document.getElementById('resultsModal').classList.add('active');
             }
 
-            async generatePatientPDF(patientId) {
-                // Generate PDF for clinician use
+            async generateClinicalReport(patientId) {
+                const patients = await this.db.getAllPatients();
+                const patient = patients.find(p => p.id === patientId);
+                
+                if (!patient) return;
+                
                 const { jsPDF } = window.jspdf;
                 const doc = new jsPDF();
+                const results = patient.results;
                 
+                // Header
                 doc.setFontSize(16);
+                doc.setTextColor(14, 165, 233);
                 doc.text("Clinical COPD Assessment Report", 20, 20);
                 
                 doc.setFontSize(10);
+                doc.setTextColor(100, 100, 100);
                 doc.text(`Patient ID: ${patientId}`, 20, 30);
-                doc.text(`Report Date: ${new Date().toLocaleDateString()}`, 20, 35);
+                doc.text(`Assessment Date: ${new Date(patient.timestamp).toLocaleString()}`, 20, 35);
+                doc.text(`Report Generated: ${new Date().toLocaleString()}`, 20, 40);
                 
-                // Add clinical content
+                // Assessment Scores
                 doc.setFontSize(12);
-                doc.text("Assessment Results:", 20, 50);
+                doc.setTextColor(0, 0, 0);
+                doc.text("Assessment Results:", 20, 55);
                 
                 doc.setFontSize(10);
-                doc.text("• CAT Score: 18/40 (Medium Impact)", 25, 60);
-                doc.text("• mMRC Grade: 2 (Moderate dyspnea)", 25, 67);
-                doc.text("• GesEPOC Classification: B", 25, 74);
+                let y = 65;
                 
-                doc.text("Clinical Recommendations:", 20, 90);
-                doc.text("1. Schedule follow-up in 3 months", 25, 100);
-                doc.text("2. Consider pulmonary rehabilitation referral", 25, 107);
-                doc.text("3. Review inhaler technique at next visit", 25, 114);
-                doc.text("4. Monitor for exacerbations", 25, 121);
+                if (results?.cat) {
+                    doc.text(`• CAT Score: ${results.cat.score}/40 (${results.cat.status})`, 25, y);
+                    y += 7;
+                }
                 
+                if (results?.mmrc) {
+                    doc.text(`• mMRC Grade: ${results.mmrc.grade} (${results.mmrc.interpretation})`, 25, y);
+                    y += 7;
+                }
+                
+                if (results?.gesepoc) {
+                    doc.text(`• GesEPOC Classification: ${results.gesepoc.class} (${results.gesepoc.interpretation})`, 25, y);
+                    y += 7;
+                    doc.text(`• Unfavorable Criteria: ${results.gesepoc.unfavorableCount || 0}/8`, 25, y);
+                    y += 10;
+                }
+                
+                // Clinical Recommendations
+                doc.setFontSize(12);
+                doc.text("Clinical Recommendations:", 20, y);
+                y += 10;
+                
+                doc.setFontSize(10);
+                if (results?.recommendations) {
+                    results.recommendations.forEach((rec, index) => {
+                        if (y > 250) {
+                            doc.addPage();
+                            y = 20;
+                        }
+                        doc.text(`${index + 1}. ${rec}`, 25, y);
+                        y += 7;
+                    });
+                }
+                
+                // Footer
+                doc.setFontSize(8);
+                doc.setTextColor(100, 100, 100);
+                doc.text("Confidential - For clinical use only", 20, 280);
+                
+                // Save PDF
                 doc.save(`Clinical-Report-Patient-${patientId}.pdf`);
+            }
+
+            async deletePatient(patientId) {
+                if (confirm('Are you sure you want to delete this patient record?')) {
+                    await this.db.deletePatient(patientId);
+                    document.getElementById('resultsModal').classList.remove('active');
+                    this.loadClinicianDashboard();
+                }
+            }
+
+            async exportAllData() {
+                const patients = await this.db.getAllPatients();
+                const dataStr = JSON.stringify(patients, null, 2);
+                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+                
+                const exportFileDefaultName = `copd-assessments-${new Date().toISOString().slice(0, 10)}.json`;
+                
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', exportFileDefaultName);
+                linkElement.click();
+            }
+
+            showConsentSettings() {
+                const modalContent = document.getElementById('modalContent');
+                modalContent.innerHTML = `
+                    <h2>Privacy Settings</h2>
+                    <div class="card">
+                        <h3>Data Management</h3>
+                        <p>Control how your data is stored and shared:</p>
+                        
+                        <div class="consent-option">
+                            <div>
+                                <strong>Local Storage</strong><br>
+                                <small>All data is stored locally on your device using IndexedDB</small>
+                            </div>
+                        </div>
+                        
+                        <div class="consent-option">
+                            <div>
+                                <strong>No Server Storage</strong><br>
+                                <small>No data is sent to any server unless you explicitly share it</small>
+                            </div>
+                        </div>
+                        
+                        <div class="consent-option">
+                            <div>
+                                <strong>QR Code Sharing</strong><br>
+                                <small>Share results via QR code that contains only assessment data</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>Clear All Data</h3>
+                        <p>Warning: This will delete all assessments from this device.</p>
+                        <button class="btn btn-secondary" onclick="app.clearAllData()">
+                            <i class="fas fa-trash"></i> Clear All Data
+                        </button>
+                    </div>
+                `;
+                
+                document.getElementById('resultsModal').classList.add('active');
+            }
+
+            async clearAllData() {
+                if (confirm('Are you sure you want to delete ALL assessment data from this device? This cannot be undone.')) {
+                    await this.db.clearAllData();
+                    document.getElementById('resultsModal').classList.remove('active');
+                    alert('All data has been cleared.');
+                }
             }
 
             setupPWA() {
@@ -1468,20 +1970,23 @@
                     deferredPrompt = e;
                     
                     // Show install button
-                    document.getElementById('installApp').style.display = 'block';
+                    const installBtn = document.getElementById('installApp');
+                    if (installBtn) {
+                        installBtn.style.display = 'block';
+                    }
                 });
             }
 
             async installPWA() {
-                if (deferredPrompt) {
-                    deferredPrompt.prompt();
-                    const { outcome } = await deferredPrompt.userChoice;
+                if (window.deferredPrompt) {
+                    window.deferredPrompt.prompt();
+                    const { outcome } = await window.deferredPrompt.userChoice;
                     
                     if (outcome === 'accepted') {
                         console.log('PWA installed');
                     }
                     
-                    deferredPrompt = null;
+                    window.deferredPrompt = null;
                     document.getElementById('installApp').style.display = 'none';
                 }
             }
@@ -1490,6 +1995,7 @@
         // Initialize the application when DOM is loaded
         document.addEventListener('DOMContentLoaded', () => {
             window.app = new COPDAssessmentSuite();
+            window.deferredPrompt = null;
             
             // Show mobile menu toggle on small screens
             if (window.innerWidth < 768) {
@@ -1517,6 +2023,13 @@
                     menuToggle.classList.add('hidden');
                     document.getElementById('sidebar').classList.remove('active');
                 }
+            });
+            
+            // Handle PWA install prompt
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                window.deferredPrompt = e;
+                document.getElementById('installApp').style.display = 'block';
             });
         });
     </script>
