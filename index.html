@@ -3,23 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>COPD Assessment Suite | Professional Clinical Tool</title>
-    
-    <!-- PWA Manifest -->
-    <link rel="manifest" href="data:application/manifest+json,{
-        \"name\": \"COPD Clinical Suite\",
-        \"short_name\": \"COPD Clinic\",
-        \"description\": \"Professional clinical assessment tool for COPD management\",
-        \"start_url\": \".\",
-        \"display\": \"standalone\",
-        \"background_color\": \"#0f172a\",
-        \"theme_color\": \"#2563eb\",
-        \"icons\": [{
-            \"src\": \"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath fill='%232563eb' d='M256 48C141.1 48 48 141.1 48 256s93.1 208 208 208 208-93.1 208-208S370.9 48 256 48zm-24 96c17.7 0 32 14.3 32 32s-14.3 32-32 32-32-14.3-32-32 14.3-32 32-32zm152 272H128c-13.2 0-24-10.8-24-24 0-13.2 10.8-24 24-24h24c30.9 0 56-25.1 56-56v-64c0-30.9-25.1-56-56-56h-24c-13.2 0-24-10.8-24-24s10.8-24 24-24h256c13.2 0 24 10.8 24 24s-10.8 24-24 24h-24c-30.9 0-56 25.1-56 56v64c0 30.9 25.1 56 56 56h24c13.2 0 24 10.8 24 24s-10.8 24-24 24z'/%3E%3C/svg%3E\",
-            \"sizes\": \"512x512\",
-            \"type\": \"image/svg+xml\"
-        }]
-    }">
+    <title>COPD Assessment Suite | Clinical Tool</title>
     
     <!-- External Libraries -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -30,48 +14,36 @@
     <style>
         /* ===== CSS RESET & VARIABLES ===== */
         :root {
-            /* Clinical Color Palette */
             --primary-clinical: #2563eb;
             --primary-dark: #1d4ed8;
             --primary-light: #60a5fa;
             --secondary-clinical: #0d9488;
             
-            /* Status Colors */
             --excellent: #10b981;
             --good: #22c55e;
             --moderate: #f59e0b;
             --poor: #ef4444;
             --severe: #dc2626;
             
-            /* UI Colors */
             --dark-bg: #0f172a;
             --card-bg: #1e293b;
             --card-border: #334155;
             --text-primary: #f1f5f9;
             --text-secondary: #94a3b8;
             
-            /* Spacing */
             --space-xs: 0.5rem;
             --space-sm: 1rem;
             --space-md: 1.5rem;
             --space-lg: 2rem;
             --space-xl: 2.5rem;
-            --space-2xl: 3rem;
             
-            /* Border Radius */
             --radius-sm: 8px;
             --radius-md: 12px;
             --radius-lg: 16px;
-            --radius-xl: 20px;
             
-            /* Shadows */
             --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.15);
             --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.2);
             --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.25);
-            
-            /* Language Switcher */
-            --lang-active: #3b82f6;
-            --lang-hover: #60a5fa;
         }
         
         * {
@@ -85,46 +57,40 @@
             background: linear-gradient(135deg, var(--dark-bg) 0%, #1e293b 100%);
             color: var(--text-primary);
             min-height: 100vh;
-            overflow-x: hidden;
         }
         
-        /* ===== LANGUAGE SWITCHER ===== */
+        /* ===== LANGUAGE SWITCHER - SMALL & CORNER ===== */
         .language-switcher {
             position: fixed;
-            top: var(--space-md);
-            right: var(--space-md);
+            top: var(--space-sm);
+            right: var(--space-sm);
             z-index: 2000;
-            background: rgba(30, 41, 59, 0.95);
+            background: rgba(30, 41, 59, 0.9);
             backdrop-filter: blur(10px);
             border: 1px solid var(--card-border);
-            border-radius: var(--radius-xl);
-            padding: var(--space-xs);
-            box-shadow: var(--shadow-lg);
+            border-radius: var(--radius-lg);
+            padding: 4px;
             display: flex;
-            gap: var(--space-xs);
+            gap: 2px;
+            box-shadow: var(--shadow-md);
         }
         
         .lang-btn {
             background: none;
             border: none;
-            padding: var(--space-sm) var(--space-md);
-            border-radius: var(--radius-lg);
+            padding: 6px 10px;
+            border-radius: var(--radius-md);
             color: var(--text-secondary);
-            font-weight: 600;
             cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s ease;
             display: flex;
             align-items: center;
-            gap: var(--space-sm);
-            transition: all 0.3s ease;
-        }
-        
-        .lang-btn:hover {
-            color: var(--text-primary);
-            background: rgba(148, 163, 184, 0.1);
+            gap: 4px;
         }
         
         .lang-btn.active {
-            background: var(--lang-active);
+            background: var(--primary-clinical);
             color: white;
         }
         
@@ -132,17 +98,15 @@
         .app-container {
             display: flex;
             min-height: 100vh;
+            padding-top: 60px;
         }
         
-        /* ===== SIDEBAR ===== */
         .sidebar {
-            width: 280px;
+            width: 250px;
             background: var(--card-bg);
             border-right: 1px solid var(--card-border);
             display: flex;
             flex-direction: column;
-            transition: transform 0.3s ease;
-            z-index: 100;
         }
         
         .sidebar-header {
@@ -154,7 +118,7 @@
             display: flex;
             align-items: center;
             gap: var(--space-sm);
-            font-size: 1.25rem;
+            font-size: 1.1rem;
             font-weight: 600;
         }
         
@@ -168,12 +132,11 @@
             align-items: center;
             gap: var(--space-sm);
             padding: var(--space-md);
-            margin-bottom: var(--space-xs);
+            margin-bottom: 4px;
             border-radius: var(--radius-md);
             color: var(--text-secondary);
-            text-decoration: none;
-            transition: all 0.2s ease;
             cursor: pointer;
+            transition: all 0.2s ease;
         }
         
         .nav-item:hover {
@@ -186,121 +149,141 @@
             color: white;
         }
         
-        /* ===== MAIN CONTENT ===== */
         .main-content {
             flex: 1;
             padding: var(--space-lg);
-            transition: transform 0.3s ease;
-        }
-        
-        /* ===== PATIENT MODE ===== */
-        .patient-container {
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
         }
         
-        .welcome-card {
-            background: var(--card-bg);
-            border-radius: var(--radius-lg);
-            padding: var(--space-xl);
-            margin-bottom: var(--space-lg);
-            border: 1px solid var(--card-border);
-        }
-        
-        .consent-card {
-            background: rgba(37, 99, 235, 0.1);
-            border: 2px solid var(--primary-clinical);
-            border-radius: var(--radius-lg);
-            padding: var(--space-xl);
-            margin: var(--space-lg) 0;
-        }
-        
-        .consent-option {
-            display: flex;
+        /* ===== INFO ICONS & MODALS ===== */
+        .info-icon {
+            display: inline-flex;
             align-items: center;
-            gap: var(--space-md);
-            padding: var(--space-md);
-            margin: var(--space-md) 0;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: var(--radius-md);
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            background: var(--primary-clinical);
+            color: white;
+            border-radius: 50%;
+            font-size: 0.8rem;
+            margin-left: 8px;
+            cursor: help;
+            vertical-align: middle;
         }
         
-        .toggle-switch {
-            position: relative;
-            display: inline-block;
-            width: 60px;
-            height: 34px;
-            flex-shrink: 0;
-        }
-        
-        .toggle-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        
-        .toggle-slider {
-            position: absolute;
-            cursor: pointer;
+        .info-modal {
+            position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: #334155;
-            transition: .4s;
-            border-radius: 34px;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+            padding: var(--space-lg);
         }
         
-        .toggle-slider:before {
-            position: absolute;
-            content: "";
-            height: 26px;
-            width: 26px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
+        .info-modal.active {
+            display: flex;
         }
         
-        input:checked + .toggle-slider {
-            background-color: var(--primary-clinical);
-        }
-        
-        input:checked + .toggle-slider:before {
-            transform: translateX(26px);
+        .info-content {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            max-width: 600px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
         }
         
         /* ===== ASSESSMENT STEPS ===== */
         .assessment-step {
             display: none;
-            animation: fadeIn 0.5s ease;
         }
         
         .assessment-step.active {
             display: block;
         }
         
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .welcome-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            border: 1px solid var(--card-border);
+            text-align: center;
         }
         
-        .question-item {
+        .question-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            border: 1px solid var(--card-border);
             margin-bottom: var(--space-lg);
-            padding: var(--space-md);
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: var(--radius-md);
         }
         
         .question-text {
             font-size: 1.1rem;
-            margin-bottom: var(--space-md);
+            margin-bottom: var(--space-lg);
+        }
+        
+        .mmrc-option {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            padding: var(--space-md);
+            margin: var(--space-sm) 0;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .mmrc-option:hover {
+            background: rgba(37, 99, 235, 0.1);
+        }
+        
+        .mmrc-option.selected {
+            background: rgba(37, 99, 235, 0.2);
+            border-left: 4px solid var(--primary-clinical);
+        }
+        
+        .slider-container {
+            margin: var(--space-lg) 0;
+        }
+        
+        .cat-slider {
+            width: 100%;
+            height: 8px;
+            -webkit-appearance: none;
+            background: linear-gradient(to right, var(--excellent), var(--good), var(--moderate), var(--poor), var(--severe));
+            border-radius: 4px;
+            outline: none;
+        }
+        
+        .cat-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border: 3px solid var(--primary-clinical);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        .slider-value {
+            text-align: center;
+            margin-top: var(--space-sm);
+            font-weight: 600;
+            color: var(--primary-clinical);
         }
         
         .options-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: var(--space-sm);
         }
         
@@ -324,133 +307,10 @@
             border-color: var(--primary-clinical);
         }
         
-        .slider-container {
-            margin: var(--space-md) 0;
-        }
-        
-        .cat-slider {
-            width: 100%;
-            height: 8px;
-            -webkit-appearance: none;
-            background: linear-gradient(to right, var(--excellent), var(--good), var(--moderate), var(--poor), var(--severe));
-            border-radius: 4px;
-            outline: none;
-        }
-        
-        .cat-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 24px;
-            height: 24px;
-            background: white;
-            border: 3px solid var(--primary-clinical);
-            border-radius: 50%;
-            cursor: pointer;
-        }
-        
-        /* ===== CLINICIAN DASHBOARD ===== */
-        .dashboard-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: var(--space-xl);
-        }
-        
-        .patients-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: var(--space-md);
-            margin-bottom: var(--space-xl);
-        }
-        
-        .patient-card {
-            background: var(--card-bg);
-            border-radius: var(--radius-lg);
-            padding: var(--space-md);
-            border: 1px solid var(--card-border);
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        
-        .patient-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--primary-clinical);
-            box-shadow: var(--shadow-lg);
-        }
-        
-        .patient-card.severe { border-left: 6px solid var(--severe); }
-        .patient-card.poor { border-left: 6px solid var(--poor); }
-        .patient-card.moderate { border-left: 6px solid var(--moderate); }
-        .patient-card.good { border-left: 6px solid var(--good); }
-        
-        .patient-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: var(--space-sm);
-        }
-        
-        .patient-status {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.875rem;
-            font-weight: 600;
-        }
-        
-        .status-severe { background: var(--severe); color: white; }
-        .status-poor { background: var(--poor); color: white; }
-        .status-moderate { background: var(--moderate); color: black; }
-        .status-good { background: var(--good); color: white; }
-        
-        /* ===== MODALS ===== */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: var(--space-lg);
-        }
-        
-        .modal-overlay.active {
-            display: flex;
-        }
-        
-        .modal-content {
-            background: var(--card-bg);
-            border-radius: var(--radius-lg);
-            padding: var(--space-xl);
-            max-width: 800px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            position: relative;
-        }
-        
-        .close-modal {
-            position: absolute;
-            top: var(--space-md);
-            right: var(--space-md);
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-        
-        /* ===== RESULTS ===== */
-        .results-section {
-            margin-top: var(--space-xl);
-        }
-        
+        /* ===== RESULTS SECTION ===== */
         .results-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: var(--space-md);
             margin: var(--space-xl) 0;
         }
@@ -460,17 +320,37 @@
             border-radius: var(--radius-md);
             text-align: center;
             color: white;
-            font-weight: 600;
         }
         
-        /* ===== PDF PREVIEW ===== */
-        .pdf-preview {
-            background: white;
-            color: #333;
-            padding: var(--space-xl);
-            border-radius: var(--radius-lg);
-            max-width: 800px;
-            margin: var(--space-lg) auto;
+        .algorithm-section {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: var(--space-lg);
+            margin: var(--space-xl) 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        
+        .algorithm-step {
+            margin-bottom: var(--space-md);
+            padding-bottom: var(--space-md);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .algorithm-step:last-child {
+            border-bottom: none;
+        }
+        
+        .algorithm-formula {
+            color: var(--primary-light);
+            margin: var(--space-xs) 0;
+        }
+        
+        .algorithm-result {
+            color: var(--good);
+            font-weight: 600;
         }
         
         /* ===== BUTTONS ===== */
@@ -501,96 +381,6 @@
             color: var(--text-primary);
         }
         
-        /* ===== SCROLL TO TOP ===== */
-        .scroll-top {
-            position: fixed;
-            bottom: var(--space-xl);
-            right: var(--space-xl);
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: var(--primary-clinical);
-            color: white;
-            border: none;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 100;
-        }
-        
-        .scroll-top.visible {
-            display: flex;
-        }
-        
-        /* ===== MOBILE RESPONSIVE ===== */
-        @media (max-width: 768px) {
-            .app-container {
-                flex-direction: column;
-            }
-            
-            .sidebar {
-                width: 100%;
-                height: auto;
-                transform: translateX(-100%);
-                position: fixed;
-                top: 0;
-                left: 0;
-                bottom: 0;
-                z-index: 1000;
-            }
-            
-            .sidebar.active {
-                transform: translateX(0);
-            }
-            
-            .menu-toggle {
-                display: block;
-                position: fixed;
-                top: var(--space-md);
-                left: var(--space-md);
-                z-index: 1001;
-                background: var(--primary-clinical);
-                color: white;
-                border: none;
-                padding: var(--space-sm);
-                border-radius: var(--radius-sm);
-                cursor: pointer;
-            }
-            
-            .patients-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .results-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .language-switcher {
-                top: var(--space-sm);
-                right: var(--space-sm);
-            }
-        }
-        
-        /* ===== UTILITY CLASSES ===== */
-        .hidden {
-            display: none !important;
-        }
-        
-        .card {
-            background: var(--card-bg);
-            border-radius: var(--radius-lg);
-            padding: var(--space-lg);
-            border: 1px solid var(--card-border);
-            margin-bottom: var(--space-md);
-        }
-        
-        .text-gradient {
-            background: linear-gradient(135deg, var(--primary-clinical), var(--primary-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
         /* ===== ACTION BAR ===== */
         .action-bar {
             position: sticky;
@@ -602,30 +392,157 @@
             justify-content: space-between;
             gap: var(--space-md);
         }
+        
+        /* ===== CLINICIAN DASHBOARD ===== */
+        .patients-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: var(--space-md);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .patient-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
+            border: 1px solid var(--card-border);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .patient-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary-clinical);
+        }
+        
+        .patient-card.severe { border-left: 6px solid var(--severe); }
+        .patient-card.poor { border-left: 6px solid var(--poor); }
+        .patient-card.moderate { border-left: 6px solid var(--moderate); }
+        .patient-card.good { border-left: 6px solid var(--good); }
+        
+        /* ===== MODALS ===== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: var(--space-lg);
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: var(--space-md);
+            right: var(--space-md);
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        /* ===== MOBILE RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .app-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: fixed;
+                top: 0;
+                left: -100%;
+                transition: left 0.3s ease;
+                z-index: 1000;
+            }
+            
+            .sidebar.active {
+                left: 0;
+            }
+            
+            .menu-toggle {
+                position: fixed;
+                top: var(--space-sm);
+                left: var(--space-sm);
+                z-index: 1001;
+                background: var(--primary-clinical);
+                color: white;
+                border: none;
+                padding: var(--space-sm);
+                border-radius: var(--radius-sm);
+                cursor: pointer;
+            }
+            
+            .main-content {
+                padding: var(--space-md);
+                padding-top: 60px;
+            }
+            
+            .language-switcher {
+                top: var(--space-sm);
+                right: var(--space-sm);
+            }
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .text-gradient {
+            background: linear-gradient(135deg, var(--primary-clinical), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
     </style>
 </head>
 <body>
-    <!-- Language Switcher -->
-    <div class="language-switcher" id="languageSwitcher">
+    <!-- Small Language Switcher -->
+    <div class="language-switcher">
         <button class="lang-btn active" data-lang="en">
             <span>🇺🇸</span>
-            <span>English</span>
+            <span>EN</span>
         </button>
         <button class="lang-btn" data-lang="es">
             <span>🇪🇸</span>
-            <span>Español</span>
+            <span>ES</span>
         </button>
     </div>
-
-    <!-- Scroll to Top -->
-    <button class="scroll-top" id="scrollTopBtn">
-        <i class="fas fa-arrow-up"></i>
-    </button>
 
     <!-- Mobile Menu Toggle -->
     <button class="menu-toggle hidden" id="menuToggle">
         <i class="fas fa-bars"></i>
     </button>
+
+    <!-- Info Modal -->
+    <div class="info-modal" id="infoModal">
+        <div class="info-content">
+            <button class="close-modal" id="closeInfo">
+                <i class="fas fa-times"></i>
+            </button>
+            <div id="infoContent"></div>
+        </div>
+    </div>
 
     <div class="app-container">
         <!-- Sidebar -->
@@ -633,7 +550,7 @@
             <div class="sidebar-header">
                 <div class="sidebar-title">
                     <i class="fas fa-lungs"></i>
-                    <span id="appTitle">COPD Clinical Suite</span>
+                    <span id="appTitle">COPD Suite</span>
                 </div>
             </div>
             
@@ -648,19 +565,9 @@
                     <span id="navClinician">Clinician Dashboard</span>
                 </div>
                 
-                <div class="nav-item" id="consentSettings">
-                    <i class="fas fa-user-shield"></i>
-                    <span id="navPrivacy">Privacy Settings</span>
-                </div>
-                
                 <div class="nav-item" id="exportData">
                     <i class="fas fa-download"></i>
                     <span id="navExport">Export Data</span>
-                </div>
-                
-                <div class="nav-item" id="installApp">
-                    <i class="fas fa-download"></i>
-                    <span id="navInstall">Install App</span>
                 </div>
             </div>
         </nav>
@@ -669,53 +576,14 @@
         <main class="main-content">
             <!-- PATIENT MODE -->
             <div id="patient-mode">
-                <div class="patient-container">
-                    <!-- Welcome Screen -->
+                <div style="max-width: 800px; margin: 0 auto;">
+                    <!-- Welcome -->
                     <div class="welcome-card" id="welcomeScreen">
-                        <h1 class="text-gradient" id="welcomeTitle">COPD Clinical Assessment</h1>
-                        <p id="welcomeText">Professional assessment tool for standardized COPD evaluation and management.</p>
-                        
-                        <div class="consent-card">
-                            <h3><i class="fas fa-user-shield"></i> <span id="consentTitle">Data Management & Consent</span></h3>
-                            <p id="consentDesc">You maintain complete control over your clinical data:</p>
-                            
-                            <div class="consent-option">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="consentAssess">
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <div>
-                                    <strong id="consent1Title">Clinical Assessment</strong><br>
-                                    <small id="consent1Desc">Proceed with standardized COPD evaluation</small>
-                                </div>
-                            </div>
-                            
-                            <div class="consent-option">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="consentSave" checked>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <div>
-                                    <strong id="consent2Title">Local Storage</strong><br>
-                                    <small id="consent2Desc">Store results securely on this device only</small>
-                                </div>
-                            </div>
-                            
-                            <div class="consent-option">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="consentShare">
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <div>
-                                    <strong id="consent3Title">Clinical Sharing</strong><br>
-                                    <small id="consent3Desc">Make results available for clinical review</small>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <button class="btn btn-primary" id="startAssessment" disabled>
+                        <h1 class="text-gradient" id="welcomeTitle">COPD Assessment Tool</h1>
+                        <p id="welcomeText" style="margin: var(--space-lg) 0;">Complete the standardized assessment below.</p>
+                        <button class="btn btn-primary" id="startAssessment">
                             <i class="fas fa-play-circle"></i>
-                            <span id="startBtnText">Begin Assessment</span>
+                            <span id="startBtnText">Start Assessment</span>
                         </button>
                     </div>
 
@@ -723,9 +591,12 @@
                     <div id="assessmentContainer" class="hidden">
                         <!-- Step 1: mMRC -->
                         <div class="assessment-step active" id="step1">
-                            <h2 id="step1Title">mMRC Dyspnea Scale</h2>
-                            <div class="card">
-                                <p class="question-text" id="mmrcQuestion">Select the statement that best describes your breathlessness:</p>
+                            <h2 id="step1Title">Dyspnea Assessment</h2>
+                            <div class="question-card">
+                                <p class="question-text">
+                                    <span id="mmrcQuestion">Select your level of breathlessness:</span>
+                                    <span class="info-icon" data-info="mmrc">i</span>
+                                </p>
                                 <div id="mmrcOptions"></div>
                             </div>
                             <div class="action-bar">
@@ -738,8 +609,8 @@
 
                         <!-- Step 2: CAT -->
                         <div class="assessment-step" id="step2">
-                            <h2 id="step2Title">CAT Questionnaire</h2>
-                            <div class="card" id="catQuestions"></div>
+                            <h2 id="step2Title">Symptom Assessment</h2>
+                            <div class="question-card" id="catQuestions"></div>
                             <div class="action-bar">
                                 <button class="btn btn-secondary" id="prevStep2">
                                     <i class="fas fa-arrow-left"></i>
@@ -754,8 +625,8 @@
 
                         <!-- Step 3: Clinical -->
                         <div class="assessment-step" id="step3">
-                            <h2 id="step3Title">Clinical Parameters</h2>
-                            <div class="card" id="clinicalQuestions"></div>
+                            <h2 id="step3Title">Clinical Assessment</h2>
+                            <div class="question-card" id="clinicalQuestions"></div>
                             <div class="action-bar">
                                 <button class="btn btn-secondary" id="prevStep3">
                                     <i class="fas fa-arrow-left"></i>
@@ -770,31 +641,23 @@
 
                         <!-- Step 4: Results -->
                         <div class="assessment-step" id="step4">
-                            <div class="results-section">
-                                <h2 id="resultsTitle">Clinical Assessment Results</h2>
-                                <div class="card" id="resultsDisplay"></div>
-                                
-                                <!-- QR Generator -->
-                                <div class="card" id="qrGenerator" style="display: none;">
-                                    <h3 id="qrTitle">Share with Clinician</h3>
-                                    <p id="qrDesc">Scan this QR code to share results:</p>
-                                    <div id="qrcode"></div>
-                                    <button class="btn btn-secondary" id="generateQR">
-                                        <i class="fas fa-qrcode"></i>
-                                        <span id="qrBtnText">Generate QR Code</span>
-                                    </button>
-                                </div>
-                                
-                                <!-- PDF Export -->
-                                <div class="card">
-                                    <h3 id="exportTitle">Clinical Documentation</h3>
-                                    <button class="btn btn-primary" id="generatePDF">
-                                        <i class="fas fa-file-pdf"></i>
-                                        <span id="pdfBtnText">Generate Clinical Report</span>
-                                    </button>
-                                    <div id="pdfPreview" class="pdf-preview hidden"></div>
-                                </div>
-                                
+                            <h2 id="resultsTitle">Assessment Results</h2>
+                            
+                            <!-- Scores -->
+                            <div class="results-grid" id="resultsDisplay"></div>
+                            
+                            <!-- Algorithm Calculations -->
+                            <div class="algorithm-section" id="algorithmSection">
+                                <h3><i class="fas fa-calculator"></i> Algorithm Verification</h3>
+                                <div id="algorithmCalculations"></div>
+                            </div>
+                            
+                            <!-- Actions -->
+                            <div style="display: flex; gap: var(--space-md); flex-wrap: wrap;">
+                                <button class="btn btn-primary" id="generatePDF">
+                                    <i class="fas fa-file-pdf"></i>
+                                    <span id="pdfBtnText">Export PDF</span>
+                                </button>
                                 <button class="btn btn-secondary" id="newAssessment">
                                     <i class="fas fa-redo"></i>
                                     <span id="newBtnText">New Assessment</span>
@@ -807,7 +670,7 @@
 
             <!-- CLINICIAN MODE -->
             <div id="clinician-mode" style="display: none;">
-                <div class="dashboard-header">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-xl);">
                     <h1 class="text-gradient" id="dashboardTitle">Clinician Dashboard</h1>
                     <button class="btn btn-secondary" id="refreshPatients">
                         <i class="fas fa-sync-alt"></i>
@@ -815,14 +678,10 @@
                     </button>
                 </div>
 
-                <!-- Patient List -->
-                <div class="patients-grid" id="patientsGrid">
-                    <!-- Patients will be loaded here -->
-                </div>
-
-                <!-- Practice Statistics -->
-                <div class="card">
-                    <h3 id="statsTitle">Practice Overview</h3>
+                <div class="patients-grid" id="patientsGrid"></div>
+                
+                <div class="question-card">
+                    <h3 id="statsTitle">Practice Statistics</h3>
                     <div id="practiceStats"></div>
                 </div>
             </div>
@@ -839,140 +698,62 @@
         </div>
     </div>
 
-    <!-- Settings Modal -->
-    <div class="modal-overlay" id="settingsModal">
-        <div class="modal-content">
-            <button class="close-modal" id="closeSettings">
-                <i class="fas fa-times"></i>
-            </button>
-            <div id="settingsContent"></div>
-        </div>
-    </div>
-
     <script>
         // ============================================
-        // COMPLETE COPD CLINICAL SUITE
-        // Full implementation with all features
+        // COPD ASSESSMENT SUITE - COMPLETE
         // ============================================
 
-        // Clinical Database with Professional Translations
         const ClinicalDatabase = {
             en: {
-                // UI Text
-                appTitle: "COPD Clinical Suite",
+                appTitle: "COPD Suite",
                 navPatient: "Patient Assessment",
                 navClinician: "Clinician Dashboard",
-                navPrivacy: "Privacy Settings",
                 navExport: "Export Data",
-                navInstall: "Install App",
                 
-                welcomeTitle: "COPD Clinical Assessment",
-                welcomeText: "Professional assessment tool for standardized COPD evaluation and management.",
+                welcomeTitle: "COPD Assessment Tool",
+                welcomeText: "Complete the standardized assessment below.",
+                startBtnText: "Start Assessment",
                 
-                consentTitle: "Data Management & Consent",
-                consentDesc: "You maintain complete control over your clinical data:",
-                consent1Title: "Clinical Assessment",
-                consent1Desc: "Proceed with standardized COPD evaluation",
-                consent2Title: "Local Storage",
-                consent2Desc: "Store results securely on this device only",
-                consent3Title: "Clinical Sharing",
-                consent3Desc: "Make results available for clinical review",
-                startBtnText: "Begin Assessment",
-                
-                step1Title: "mMRC Dyspnea Scale",
-                mmrcQuestion: "Select the statement that best describes your breathlessness:",
+                step1Title: "Dyspnea Assessment",
+                mmrcQuestion: "Select your level of breathlessness:",
+                mmrcInfo: "mMRC Scale: Grade 0 = No dyspnea with strenuous exercise, Grade 1 = Dyspnea when hurrying, Grade 2 = Walks slower than peers, Grade 3 = Stops after ~100m, Grade 4 = Too breathless to leave house",
                 continueText1: "Continue",
                 
-                step2Title: "CAT Questionnaire",
+                step2Title: "Symptom Assessment",
+                catInfo: "CAT Score: Rate each symptom from 0 (none) to 5 (severe). Total range 0-40. Higher scores indicate greater symptom impact.",
                 continueText2: "Continue",
                 backText1: "Back",
                 
-                step3Title: "Clinical Parameters",
+                step3Title: "Clinical Assessment",
                 continueText3: "View Results",
                 backText2: "Back",
                 
-                resultsTitle: "Clinical Assessment Results",
-                qrTitle: "Share with Clinician",
-                qrDesc: "Scan this QR code to share results:",
-                qrBtnText: "Generate QR Code",
-                exportTitle: "Clinical Documentation",
-                pdfBtnText: "Generate Clinical Report",
+                resultsTitle: "Assessment Results",
+                pdfBtnText: "Export PDF",
                 newBtnText: "New Assessment",
                 
                 dashboardTitle: "Clinician Dashboard",
                 refreshText: "Refresh",
-                statsTitle: "Practice Overview",
+                statsTitle: "Practice Statistics",
                 
                 // Clinical Data
                 mMRC: [
-                    {
-                        value: 0,
-                        text: "I only get breathless with strenuous exercise",
-                        description: "No dyspnea except with strenuous exertion"
-                    },
-                    {
-                        value: 1,
-                        text: "I get short of breath when hurrying on level ground or walking up a slight hill",
-                        description: "Dyspnea when hurrying or walking uphill"
-                    },
-                    {
-                        value: 2,
-                        text: "On level ground, I walk slower than people of the same age because of breathlessness",
-                        description: "Walks slower than peers due to dyspnea"
-                    },
-                    {
-                        value: 3,
-                        text: "I stop for breath after walking about 100 meters or after a few minutes on level ground",
-                        description: "Stops for breath after ~100 meters"
-                    },
-                    {
-                        value: 4,
-                        text: "I am too breathless to leave the house or I get breathless when dressing",
-                        description: "Housebound due to dyspnea"
-                    }
+                    { value: 0, text: "No breathlessness with strenuous exercise" },
+                    { value: 1, text: "Breathless when hurrying or walking uphill" },
+                    { value: 2, text: "Walks slower than peers due to breathlessness" },
+                    { value: 3, text: "Stops for breath after walking ~100 meters" },
+                    { value: 4, text: "Too breathless to leave house" }
                 ],
                 
                 CAT: [
-                    {
-                        id: 1,
-                        question: "I never cough",
-                        opposite: "I cough all the time"
-                    },
-                    {
-                        id: 2,
-                        question: "I have no phlegm (mucus) in my chest at all",
-                        opposite: "My chest is full of phlegm"
-                    },
-                    {
-                        id: 3,
-                        question: "My chest does not feel tight at all",
-                        opposite: "My chest feels very tight"
-                    },
-                    {
-                        id: 4,
-                        question: "When I walk up a hill or one flight of stairs I am not breathless",
-                        opposite: "When I walk up a hill or one flight of stairs I am very breathless"
-                    },
-                    {
-                        id: 5,
-                        question: "I am not limited doing any activities at home",
-                        opposite: "I am very limited doing activities at home"
-                    },
-                    {
-                        id: 6,
-                        question: "I am confident leaving my home despite my lung condition",
-                        opposite: "I am not at all confident leaving my home because of my lung condition"
-                    },
-                    {
-                        id: 7,
-                        question: "I sleep soundly",
-                        opposite: "I don't sleep soundly because of my lung condition"
-                    },
-                    {
-                        id: 8,
-                        question: "I have lots of energy",
-                        opposite: "I have no energy at all"
-                    }
+                    { id: 1, left: "I never cough", right: "I cough all the time" },
+                    { id: 2, left: "No phlegm in chest", right: "Chest full of phlegm" },
+                    { id: 3, left: "No chest tightness", right: "Chest very tight" },
+                    { id: 4, left: "No breathlessness climbing stairs", right: "Very breathless climbing stairs" },
+                    { id: 5, left: "Not limited at home", right: "Very limited at home" },
+                    { id: 6, left: "Confident leaving home", right: "Not confident leaving home" },
+                    { id: 7, left: "Sleep soundly", right: "Don't sleep soundly" },
+                    { id: 8, left: "Lots of energy", right: "No energy" }
                 ],
                 
                 GesEPOC: [
@@ -987,7 +768,7 @@
                     },
                     {
                         id: "exacerbations",
-                        question: "Have you had any COPD exacerbations in the last 3 months?",
+                        question: "Any COPD exacerbations in last 3 months?",
                         options: [
                             { value: "no", label: "No exacerbations" },
                             { value: "yes", label: "Yes, one or more" }
@@ -1008,157 +789,59 @@
                             { value: "low", label: "< 3 times per week" },
                             { value: "high", label: "≥ 3 times per week" }
                         ]
-                    },
-                    {
-                        id: "activity",
-                        question: "Daily physical activity level:",
-                        options: [
-                            { value: "adequate", label: "≥ 30 minutes per day" },
-                            { value: "low", label: "< 30 minutes per day" }
-                        ]
-                    },
-                    {
-                        id: "fev1",
-                        question: "FEV₁ (% predicted):",
-                        options: [
-                            { value: ">=50", label: "≥ 50%" },
-                            { value: "<50", label: "< 50%" },
-                            { value: "unknown", label: "Unknown" }
-                        ]
                     }
-                ],
-                
-                // Results Text
-                catScore: "CAT Score",
-                mmrcGrade: "mMRC Grade",
-                gesepocClass: "Clinical Status",
-                recommendations: "Clinical Recommendations",
-                lowImpact: "Low Impact",
-                mediumImpact: "Medium Impact",
-                highImpact: "High Impact",
-                veryHighImpact: "Very High Impact",
-                controlled: "Controlled",
-                partiallyControlled: "Partially Controlled",
-                poorlyControlled: "Poorly Controlled",
-                uncontrolled: "Uncontrolled"
+                ]
             },
             
             es: {
-                // UI Text - Professional Spanish
-                appTitle: "Suite Clínica EPOC",
-                navPatient: "Evaluación del Paciente",
-                navClinician: "Panel del Clínico",
-                navPrivacy: "Configuración de Privacidad",
+                appTitle: "Suite EPOC",
+                navPatient: "Evaluación Paciente",
+                navClinician: "Panel Clínico",
                 navExport: "Exportar Datos",
-                navInstall: "Instalar App",
                 
-                welcomeTitle: "Evaluación Clínica de EPOC",
-                welcomeText: "Herramienta profesional para evaluación estandarizada y manejo de EPOC.",
-                
-                consentTitle: "Gestión de Datos y Consentimiento",
-                consentDesc: "Mantiene control completo sobre sus datos clínicos:",
-                consent1Title: "Evaluación Clínica",
-                consent1Desc: "Proceder con evaluación estandarizada de EPOC",
-                consent2Title: "Almacenamiento Local",
-                consent2Desc: "Almacenar resultados solo en este dispositivo",
-                consent3Title: "Compartición Clínica",
-                consent3Desc: "Hacer resultados disponibles para revisión clínica",
+                welcomeTitle: "Herramienta de Evaluación EPOC",
+                welcomeText: "Complete la evaluación estandarizada a continuación.",
                 startBtnText: "Iniciar Evaluación",
                 
-                step1Title: "Escala de Disnea mMRC",
-                mmrcQuestion: "Seleccione la declaración que mejor describa su dificultad respiratoria:",
+                step1Title: "Evaluación de Disnea",
+                mmrcQuestion: "Seleccione su nivel de dificultad respiratoria:",
+                mmrcInfo: "Escala mMRC: Grado 0 = Sin disnea con ejercicio intenso, Grado 1 = Disnea al apresurarse, Grado 2 = Camina más lento que sus contemporáneos, Grado 3 = Se detiene después de ~100m, Grado 4 = Demasiado sin aliento para salir de casa",
                 continueText1: "Continuar",
                 
-                step2Title: "Cuestionario CAT",
+                step2Title: "Evaluación de Síntomas",
+                catInfo: "Puntuación CAT: Califique cada síntoma de 0 (ninguno) a 5 (severo). Rango total 0-40. Puntuaciones más altas indican mayor impacto de síntomas.",
                 continueText2: "Continuar",
                 backText1: "Atrás",
                 
-                step3Title: "Parámetros Clínicos",
+                step3Title: "Evaluación Clínica",
                 continueText3: "Ver Resultados",
                 backText2: "Atrás",
                 
-                resultsTitle: "Resultados de la Evaluación Clínica",
-                qrTitle: "Compartir con el Clínico",
-                qrDesc: "Escanee este código QR para compartir resultados:",
-                qrBtnText: "Generar Código QR",
-                exportTitle: "Documentación Clínica",
-                pdfBtnText: "Generar Informe Clínico",
+                resultsTitle: "Resultados de Evaluación",
+                pdfBtnText: "Exportar PDF",
                 newBtnText: "Nueva Evaluación",
                 
                 dashboardTitle: "Panel del Clínico",
                 refreshText: "Actualizar",
-                statsTitle: "Resumen de la Práctica",
+                statsTitle: "Estadísticas de Práctica",
                 
-                // Clinical Data - Professional Spanish
                 mMRC: [
-                    {
-                        value: 0,
-                        text: "Solo tengo dificultad respiratoria con ejercicio intenso",
-                        description: "Sin disnea excepto con esfuerzo intenso"
-                    },
-                    {
-                        value: 1,
-                        text: "Me quedo sin aliento cuando me apresuro en terreno plano o subo una colina suave",
-                        description: "Disnea al apresurarse o subir pendientes"
-                    },
-                    {
-                        value: 2,
-                        text: "En terreno plano, camino más lento que personas de mi edad debido a la dificultad respiratoria",
-                        description: "Camina más lento que sus contemporáneos debido a disnea"
-                    },
-                    {
-                        value: 3,
-                        text: "Me detengo para respirar después de caminar unos 100 metros o después de pocos minutos en terreno plano",
-                        description: "Se detiene para respirar después de ~100 metros"
-                    },
-                    {
-                        value: 4,
-                        text: "Estoy demasiado sin aliento para salir de casa o me quedo sin aliento al vestirme",
-                        description: "Confinado al hogar debido a disnea"
-                    }
+                    { value: 0, text: "Sin dificultad respiratoria con ejercicio intenso" },
+                    { value: 1, text: "Sin aliento al apresurarse o subir pendientes" },
+                    { value: 2, text: "Camina más lento que sus contemporáneos por disnea" },
+                    { value: 3, text: "Se detiene para respirar después de caminar ~100 metros" },
+                    { value: 4, text: "Demasiado sin aliento para salir de casa" }
                 ],
                 
                 CAT: [
-                    {
-                        id: 1,
-                        question: "Nunca toso",
-                        opposite: "Toso todo el tiempo"
-                    },
-                    {
-                        id: 2,
-                        question: "No tengo flema en el pecho",
-                        opposite: "Mi pecho está lleno de flema"
-                    },
-                    {
-                        id: 3,
-                        question: "Mi pecho no se siente apretado",
-                        opposite: "Mi pecho se siente muy apretado"
-                    },
-                    {
-                        id: 4,
-                        question: "Cuando subo una colina o un tramo de escaleras no tengo dificultad respiratoria",
-                        opposite: "Cuando subo una colina o un tramo de escaleras tengo mucha dificultad respiratoria"
-                    },
-                    {
-                        id: 5,
-                        question: "No tengo limitaciones para hacer actividades en casa",
-                        opposite: "Estoy muy limitado para hacer actividades en casa"
-                    },
-                    {
-                        id: 6,
-                        question: "Me siento seguro saliendo de casa a pesar de mi condición pulmonar",
-                        opposite: "No me siento seguro saliendo de casa debido a mi condición pulmonar"
-                    },
-                    {
-                        id: 7,
-                        question: "Duermo profundamente",
-                        opposite: "No duermo profundamente debido a mi condición pulmonar"
-                    },
-                    {
-                        id: 8,
-                        question: "Tengo mucha energía",
-                        opposite: "No tengo energía"
-                    }
+                    { id: 1, left: "Nunca toso", right: "Toso todo el tiempo" },
+                    { id: 2, left: "Sin flema en el pecho", right: "Pecho lleno de flema" },
+                    { id: 3, left: "Sin opresión en el pecho", right: "Pecho muy apretado" },
+                    { id: 4, left: "Sin disnea al subir escaleras", right: "Muy disneico al subir escaleras" },
+                    { id: 5, left: "Sin limitaciones en casa", right: "Muy limitado en casa" },
+                    { id: 6, left: "Confiado saliendo de casa", right: "No confiado saliendo de casa" },
+                    { id: 7, left: "Duermo profundamente", right: "No duermo profundamente" },
+                    { id: 8, left: "Mucha energía", right: "Sin energía" }
                 ],
                 
                 GesEPOC: [
@@ -1173,7 +856,7 @@
                     },
                     {
                         id: "exacerbations",
-                        question: "¿Ha tenido exacerbaciones de EPOC en los últimos 3 meses?",
+                        question: "¿Alguna exacerbación de EPOC en los últimos 3 meses?",
                         options: [
                             { value: "no", label: "Sin exacerbaciones" },
                             { value: "yes", label: "Sí, una o más" }
@@ -1194,48 +877,15 @@
                             { value: "low", label: "< 3 veces por semana" },
                             { value: "high", label: "≥ 3 veces por semana" }
                         ]
-                    },
-                    {
-                        id: "activity",
-                        question: "Nivel de actividad física diaria:",
-                        options: [
-                            { value: "adequate", label: "≥ 30 minutos por día" },
-                            { value: "low", label: "< 30 minutos por día" }
-                        ]
-                    },
-                    {
-                        id: "fev1",
-                        question: "FEV₁ (% predicho):",
-                        options: [
-                            { value: ">=50", label: "≥ 50%" },
-                            { value: "<50", label: "< 50%" },
-                            { value: "unknown", label: "Desconocido" }
-                        ]
                     }
-                ],
-                
-                // Results Text
-                catScore: "Puntuación CAT",
-                mmrcGrade: "Grado mMRC",
-                gesepocClass: "Estado Clínico",
-                recommendations: "Recomendaciones Clínicas",
-                lowImpact: "Impacto Bajo",
-                mediumImpact: "Impacto Moderado",
-                highImpact: "Impacto Alto",
-                veryHighImpact: "Impacto Muy Alto",
-                controlled: "Controlado",
-                partiallyControlled: "Parcialmente Controlado",
-                poorlyControlled: "Pobremente Controlado",
-                uncontrolled: "No Controlado"
+                ]
             }
         };
 
-        // Complete IndexedDB Implementation
-        class ClinicalDatabaseManager {
+        class COPDDatabase {
             constructor() {
-                this.dbName = 'COPD_Clinical_DB';
-                this.dbVersion = 4;
-                this.db = null;
+                this.dbName = 'COPD_Assessment_DB';
+                this.dbVersion = 2;
             }
 
             async init() {
@@ -1251,31 +901,12 @@
                     
                     request.onupgradeneeded = (event) => {
                         const db = event.target.result;
-                        
-                        // Patients store
                         if (!db.objectStoreNames.contains('patients')) {
                             const store = db.createObjectStore('patients', { 
                                 keyPath: 'id',
                                 autoIncrement: true 
                             });
-                            store.createIndex('consent', 'consent.shareWithClinician');
                             store.createIndex('timestamp', 'timestamp');
-                            store.createIndex('status', 'results.cat.color');
-                            store.createIndex('language', 'language');
-                        }
-                        
-                        // Settings store
-                        if (!db.objectStoreNames.contains('settings')) {
-                            const store = db.createObjectStore('settings', { 
-                                keyPath: 'id' 
-                            });
-                        }
-                        
-                        // Practice stats store
-                        if (!db.objectStoreNames.contains('practiceStats')) {
-                            const store = db.createObjectStore('practiceStats', { 
-                                keyPath: 'id' 
-                            });
                         }
                     };
                 });
@@ -1284,36 +915,18 @@
             async savePatient(patientData) {
                 const tx = this.db.transaction(['patients'], 'readwrite');
                 const store = tx.objectStore('patients');
-                
-                return new Promise((resolve, reject) => {
+                return new Promise((resolve) => {
                     const request = store.put(patientData);
                     request.onsuccess = () => resolve(request.result);
-                    request.onerror = () => reject(request.error);
                 });
             }
 
-            async getPatients(consentedOnly = false) {
+            async getPatients() {
                 return new Promise((resolve) => {
                     const tx = this.db.transaction(['patients'], 'readonly');
                     const store = tx.objectStore('patients');
-                    
-                    if (consentedOnly) {
-                        const index = store.index('consent');
-                        const request = index.getAll(IDBKeyRange.only(true));
-                        request.onsuccess = () => resolve(request.result || []);
-                    } else {
-                        const request = store.getAll();
-                        request.onsuccess = () => resolve(request.result || []);
-                    }
-                });
-            }
-
-            async getPatient(id) {
-                return new Promise((resolve) => {
-                    const tx = this.db.transaction(['patients'], 'readonly');
-                    const store = tx.objectStore('patients');
-                    const request = store.get(id);
-                    request.onsuccess = () => resolve(request.result);
+                    const request = store.getAll();
+                    request.onsuccess = () => resolve(request.result || []);
                 });
             }
 
@@ -1321,7 +934,6 @@
                 const tx = this.db.transaction(['patients'], 'readwrite');
                 const store = tx.objectStore('patients');
                 store.delete(id);
-                
                 return new Promise((resolve) => {
                     tx.oncomplete = () => resolve();
                 });
@@ -1331,92 +943,19 @@
                 const tx = this.db.transaction(['patients'], 'readwrite');
                 const store = tx.objectStore('patients');
                 store.clear();
-                
                 return new Promise((resolve) => {
                     tx.oncomplete = () => resolve();
                 });
             }
-
-            async saveSetting(key, value) {
-                const tx = this.db.transaction(['settings'], 'readwrite');
-                const store = tx.objectStore('settings');
-                await store.put({ id: key, value });
-            }
-
-            async getSetting(key) {
-                return new Promise((resolve) => {
-                    const tx = this.db.transaction(['settings'], 'readonly');
-                    const store = tx.objectStore('settings');
-                    const request = store.get(key);
-                    request.onsuccess = () => resolve(request.result?.value);
-                });
-            }
-
-            async getPracticeStats() {
-                const patients = await this.getPatients(true);
-                return this.calculateStats(patients);
-            }
-
-            calculateStats(patients) {
-                const stats = {
-                    total: patients.length,
-                    byStatus: { severe: 0, poor: 0, moderate: 0, good: 0 },
-                    avgCAT: 0,
-                    avgMMRC: 0,
-                    uncontrolled: 0,
-                    recent: 0
-                };
-                
-                let totalCAT = 0, totalMMRC = 0, count = 0;
-                const now = new Date();
-                
-                patients.forEach(patient => {
-                    if (patient.results) {
-                        const status = patient.results.cat?.color || 'moderate';
-                        stats.byStatus[status]++;
-                        
-                        if (patient.results.cat?.score) {
-                            totalCAT += patient.results.cat.score;
-                            count++;
-                        }
-                        
-                        if (patient.results.mmrc?.grade !== undefined) {
-                            totalMMRC += patient.results.mmrc.grade;
-                        }
-                        
-                        if (patient.results.gesepoc?.class === 'D' || patient.results.gesepoc?.class === 'C') {
-                            stats.uncontrolled++;
-                        }
-                        
-                        // Check if recent (last 7 days)
-                        const patientDate = new Date(patient.timestamp);
-                        const daysDiff = (now - patientDate) / (1000 * 60 * 60 * 24);
-                        if (daysDiff <= 7) {
-                            stats.recent++;
-                        }
-                    }
-                });
-                
-                stats.avgCAT = count > 0 ? Math.round(totalCAT / count) : 0;
-                stats.avgMMRC = count > 0 ? (totalMMRC / count).toFixed(1) : 0;
-                
-                return stats;
-            }
         }
 
-        // Main Application Class
-        class CompleteCOPDSuite {
+        class COPDAssessmentSuite {
             constructor() {
-                this.db = new ClinicalDatabaseManager();
+                this.db = new COPDDatabase();
                 this.currentLang = 'en';
                 this.currentMode = 'patient';
                 this.currentStep = 1;
                 this.assessmentData = {
-                    consent: {
-                        assessment: false,
-                        saveLocal: true,
-                        shareWithClinician: false
-                    },
                     timestamp: null,
                     language: 'en',
                     steps: {
@@ -1431,33 +970,16 @@
             }
 
             async init() {
-                // Initialize database
                 await this.db.init();
-                
-                // Load saved language preference
-                const savedLang = await this.db.getSetting('language');
-                if (savedLang) {
-                    this.currentLang = savedLang;
-                    document.documentElement.setAttribute('data-lang', savedLang);
-                    document.querySelectorAll('.lang-btn').forEach(btn => {
-                        btn.classList.toggle('active', btn.dataset.lang === savedLang);
-                    });
-                }
-                
-                // Setup application
                 this.setupEventListeners();
-                this.setupNavigation();
                 this.setupLanguageSwitcher();
-                this.setupScrollBehavior();
+                this.setupInfoIcons();
                 this.renderAssessmentContent();
-                this.setupPWA();
                 
-                // Load clinician dashboard if needed
                 if (window.location.hash === '#clinician') {
                     this.switchMode('clinician');
                 }
                 
-                // Update UI
                 this.updateUIForLanguage();
             }
 
@@ -1470,7 +992,7 @@
                     });
                 });
 
-                // Mode switching
+                // Navigation
                 document.querySelectorAll('.nav-item[data-mode]').forEach(item => {
                     item.addEventListener('click', () => {
                         const mode = item.dataset.mode;
@@ -1478,93 +1000,71 @@
                     });
                 });
 
-                // Special nav items
-                document.getElementById('consentSettings').addEventListener('click', () => this.showConsentSettings());
                 document.getElementById('exportData').addEventListener('click', () => this.exportAllData());
-                document.getElementById('installApp').addEventListener('click', () => this.installPWA());
-
-                // Consent toggles
-                document.getElementById('consentAssess').addEventListener('change', (e) => {
-                    this.assessmentData.consent.assessment = e.target.checked;
-                    document.getElementById('startAssessment').disabled = !e.target.checked;
-                });
-
-                document.getElementById('consentSave').addEventListener('change', (e) => {
-                    this.assessmentData.consent.saveLocal = e.target.checked;
-                });
-
-                document.getElementById('consentShare').addEventListener('change', (e) => {
-                    this.assessmentData.consent.shareWithClinician = e.target.checked;
-                });
-
-                // Assessment navigation
-                document.getElementById('startAssessment').addEventListener('click', () => {
-                    if (this.assessmentData.consent.assessment) {
-                        this.startAssessment();
-                    }
-                });
-
+                document.getElementById('startAssessment').addEventListener('click', () => this.startAssessment());
                 document.getElementById('nextStep1').addEventListener('click', () => this.nextStep());
                 document.getElementById('prevStep2').addEventListener('click', () => this.prevStep());
                 document.getElementById('nextStep2').addEventListener('click', () => this.nextStep());
                 document.getElementById('prevStep3').addEventListener('click', () => this.prevStep());
                 document.getElementById('nextStep3').addEventListener('click', () => this.nextStep());
-
-                // Results actions
-                document.getElementById('generateQR').addEventListener('click', () => this.generateQRCode());
                 document.getElementById('generatePDF').addEventListener('click', () => this.generatePDF());
                 document.getElementById('newAssessment').addEventListener('click', () => this.resetAssessment());
-
-                // Clinician dashboard
                 document.getElementById('refreshPatients').addEventListener('click', () => this.loadClinicianDashboard());
-
-                // Modals
                 document.getElementById('closeModal').addEventListener('click', () => {
                     document.getElementById('resultsModal').classList.remove('active');
                 });
-
-                document.getElementById('closeSettings').addEventListener('click', () => {
-                    document.getElementById('settingsModal').classList.remove('active');
+                document.getElementById('closeInfo').addEventListener('click', () => {
+                    document.getElementById('infoModal').classList.remove('active');
                 });
-
-                // Mobile menu
                 document.getElementById('menuToggle').addEventListener('click', () => {
                     document.getElementById('sidebar').classList.toggle('active');
-                });
-
-                // Scroll to top
-                document.getElementById('scrollTopBtn').addEventListener('click', () => {
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
                 });
             }
 
             setupLanguageSwitcher() {
-                // Update UI immediately
-                this.updateUIForLanguage();
+                // Update on load
+                document.documentElement.setAttribute('data-lang', this.currentLang);
             }
 
-            async switchLanguage(lang) {
+            setupInfoIcons() {
+                // Add info icons and their handlers
+                document.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('info-icon')) {
+                        const infoType = e.target.dataset.info;
+                        this.showInfoModal(infoType);
+                    }
+                });
+            }
+
+            showInfoModal(infoType) {
+                const t = ClinicalDatabase[this.currentLang];
+                let content = '';
+                
+                switch(infoType) {
+                    case 'mmrc':
+                        content = `<h3>mMRC Dyspnea Scale</h3><p>${t.mmrcInfo}</p>`;
+                        break;
+                    case 'cat':
+                        content = `<h3>CAT Questionnaire</h3><p>${t.catInfo}</p>`;
+                        break;
+                }
+                
+                document.getElementById('infoContent').innerHTML = content;
+                document.getElementById('infoModal').classList.add('active');
+            }
+
+            switchLanguage(lang) {
                 this.currentLang = lang;
                 this.assessmentData.language = lang;
-                
-                // Save preference
-                await this.db.saveSetting('language', lang);
-                
-                // Update HTML attribute
                 document.documentElement.setAttribute('data-lang', lang);
                 
-                // Update active button
                 document.querySelectorAll('.lang-btn').forEach(btn => {
                     btn.classList.toggle('active', btn.dataset.lang === lang);
                 });
                 
-                // Update UI
                 this.updateUIForLanguage();
                 
-                // Re-render current content
-                if (this.currentStep >= 2) {
-                    this.renderMMRCOptions();
-                }
+                if (this.currentStep >= 2) this.renderMMRCOptions();
                 if (this.currentStep >= 3) {
                     this.renderCATQuestions();
                     this.renderClinicalQuestions();
@@ -1572,33 +1072,19 @@
                 if (this.currentStep === 4 && this.assessmentData.results) {
                     this.displayResults();
                 }
-                if (this.currentMode === 'clinician') {
-                    this.loadClinicianDashboard();
-                }
+                if (this.currentMode === 'clinician') this.loadClinicianDashboard();
             }
 
             updateUIForLanguage() {
                 const t = ClinicalDatabase[this.currentLang];
                 
-                // Update all text elements
                 document.getElementById('appTitle').textContent = t.appTitle;
                 document.getElementById('navPatient').textContent = t.navPatient;
                 document.getElementById('navClinician').textContent = t.navClinician;
-                document.getElementById('navPrivacy').textContent = t.navPrivacy;
                 document.getElementById('navExport').textContent = t.navExport;
-                document.getElementById('navInstall').textContent = t.navInstall;
                 
                 document.getElementById('welcomeTitle').textContent = t.welcomeTitle;
                 document.getElementById('welcomeText').textContent = t.welcomeText;
-                
-                document.getElementById('consentTitle').textContent = t.consentTitle;
-                document.getElementById('consentDesc').textContent = t.consentDesc;
-                document.getElementById('consent1Title').textContent = t.consent1Title;
-                document.getElementById('consent1Desc').textContent = t.consent1Desc;
-                document.getElementById('consent2Title').textContent = t.consent2Title;
-                document.getElementById('consent2Desc').textContent = t.consent2Desc;
-                document.getElementById('consent3Title').textContent = t.consent3Title;
-                document.getElementById('consent3Desc').textContent = t.consent3Desc;
                 document.getElementById('startBtnText').textContent = t.startBtnText;
                 
                 document.getElementById('step1Title').textContent = t.step1Title;
@@ -1614,10 +1100,6 @@
                 document.getElementById('backText2').textContent = t.backText2;
                 
                 document.getElementById('resultsTitle').textContent = t.resultsTitle;
-                document.getElementById('qrTitle').textContent = t.qrTitle;
-                document.getElementById('qrDesc').textContent = t.qrDesc;
-                document.getElementById('qrBtnText').textContent = t.qrBtnText;
-                document.getElementById('exportTitle').textContent = t.exportTitle;
                 document.getElementById('pdfBtnText').textContent = t.pdfBtnText;
                 document.getElementById('newBtnText').textContent = t.newBtnText;
                 
@@ -1626,40 +1108,13 @@
                 document.getElementById('statsTitle').textContent = t.statsTitle;
             }
 
-            setupNavigation() {
-                document.querySelectorAll('.nav-item').forEach(item => {
-                    item.addEventListener('click', () => {
-                        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-                        item.classList.add('active');
-                    });
-                });
-            }
-
-            setupScrollBehavior() {
-                window.addEventListener('scroll', () => {
-                    const scrollBtn = document.getElementById('scrollTopBtn');
-                    if (window.scrollY > 300) {
-                        scrollBtn.classList.add('visible');
-                    } else {
-                        scrollBtn.classList.remove('visible');
-                    }
-                });
-            }
-
             switchMode(mode) {
                 this.currentMode = mode;
-                
-                // Update UI
                 document.getElementById('patient-mode').style.display = mode === 'patient' ? 'block' : 'none';
                 document.getElementById('clinician-mode').style.display = mode === 'clinician' ? 'block' : 'none';
-                
-                // Update mobile menu
                 document.getElementById('sidebar').classList.remove('active');
-                
-                // Update URL
                 window.location.hash = mode;
                 
-                // Load data for clinician mode
                 if (mode === 'clinician') {
                     this.loadClinicianDashboard();
                 }
@@ -1668,12 +1123,9 @@
             startAssessment() {
                 document.getElementById('welcomeScreen').classList.add('hidden');
                 document.getElementById('assessmentContainer').classList.remove('hidden');
-                
                 this.assessmentData.timestamp = new Date().toISOString();
                 this.currentStep = 1;
                 this.renderCurrentStep();
-                
-                // Auto-scroll to top
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
 
@@ -1688,28 +1140,25 @@
                 const options = ClinicalDatabase[this.currentLang].mMRC;
                 
                 container.innerHTML = options.map(option => `
-                    <div class="consent-option mmrc-option" data-value="${option.value}">
+                    <div class="mmrc-option" data-value="${option.value}">
                         <i class="fas fa-${option.value <= 1 ? 'smile' : option.value <= 2 ? 'meh' : 'frown'}"></i>
                         <div style="flex: 1;">
-                            <strong>${option.value === 0 ? 'Grade 0' : option.value === 1 ? 'Grade 1' : option.value === 2 ? 'Grade 2' : option.value === 3 ? 'Grade 3' : 'Grade 4'}</strong><br>
+                            <strong>Grade ${option.value}</strong><br>
                             <small>${option.text}</small>
                         </div>
                     </div>
                 `).join('');
                 
-                // Add click handlers
                 container.querySelectorAll('.mmrc-option').forEach(option => {
                     option.addEventListener('click', (e) => {
                         const value = parseInt(e.currentTarget.dataset.value);
                         this.assessmentData.steps.mmrc = value;
                         
-                        // Visual feedback
                         container.querySelectorAll('.mmrc-option').forEach(opt => {
-                            opt.style.background = '';
+                            opt.classList.remove('selected');
                         });
-                        e.currentTarget.style.background = 'rgba(37, 99, 235, 0.2)';
+                        e.currentTarget.classList.add('selected');
                         
-                        // Enable continue button
                         document.getElementById('nextStep1').disabled = false;
                     });
                 });
@@ -1720,21 +1169,16 @@
                 const questions = ClinicalDatabase[this.currentLang].CAT;
                 
                 container.innerHTML = questions.map(q => `
-                    <div class="question-item">
-                        <p class="question-text">${q.question}</p>
-                        <div class="slider-container">
-                            <input type="range" min="0" max="5" value="0" 
-                                   class="cat-slider" data-question="${q.id}"
-                                   oninput="window.copdSuite.updateCATValue(${q.id}, this.value)">
-                            <div style="display: flex; justify-content: space-between; margin-top: var(--space-xs);">
-                                ${[0,1,2,3,4,5].map(num => `<span style="font-size: 0.875rem; color: var(--text-secondary);">${num}</span>`).join('')}
-                            </div>
-                            <div style="text-align: center; margin-top: var(--space-sm);">
-                                <span style="color: var(--text-secondary);">
-                                    <strong>${ClinicalDatabase[this.currentLang].catScore}: </strong>
-                                    <span id="cat-value-${q.id}">0</span>/5
-                                </span>
-                            </div>
+                    <div class="slider-container">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-sm);">
+                            <span style="color: var(--text-secondary); font-size: 0.9rem;">${q.left}</span>
+                            <span style="color: var(--text-secondary); font-size: 0.9rem;">${q.right}</span>
+                        </div>
+                        <input type="range" min="0" max="5" value="0" 
+                               class="cat-slider" data-question="${q.id}"
+                               oninput="window.copdApp.updateCATValue(${q.id}, this.value)">
+                        <div class="slider-value">
+                            <span id="cat-value-${q.id}">0</span>/5
                         </div>
                     </div>
                 `).join('');
@@ -1745,12 +1189,12 @@
                 const questions = ClinicalDatabase[this.currentLang].GesEPOC;
                 
                 container.innerHTML = questions.map(q => `
-                    <div class="question-item">
+                    <div style="margin-bottom: var(--space-xl);">
                         <p class="question-text">${q.question}</p>
                         <div class="options-grid" id="clinical-${q.id}">
                             ${q.options.map(opt => `
                                 <button class="option-btn" data-value="${opt.value}" 
-                                        onclick="window.copdSuite.selectClinical('${q.id}', '${opt.value}')">
+                                        onclick="window.copdApp.selectClinical('${q.id}', '${opt.value}')">
                                     ${opt.label}
                                 </button>
                             `).join('')}
@@ -1763,7 +1207,6 @@
                 this.assessmentData.steps.cat[questionId] = parseInt(value);
                 document.getElementById(`cat-value-${questionId}`).textContent = value;
                 
-                // Check if all CAT questions answered
                 const allAnswered = ClinicalDatabase[this.currentLang].CAT.every(q => 
                     this.assessmentData.steps.cat[q.id] !== undefined
                 );
@@ -1773,14 +1216,12 @@
             selectClinical(questionId, value) {
                 this.assessmentData.steps.gesepoc[questionId] = value;
                 
-                // Visual feedback
                 const container = document.getElementById(`clinical-${questionId}`);
                 container.querySelectorAll('.option-btn').forEach(btn => {
                     btn.classList.remove('selected');
                 });
                 event.currentTarget.classList.add('selected');
                 
-                // Check if all clinical questions answered
                 const allAnswered = ClinicalDatabase[this.currentLang].GesEPOC.every(q => 
                     this.assessmentData.steps.gesepoc[q.id] !== undefined
                 );
@@ -1789,30 +1230,21 @@
 
             nextStep() {
                 if (this.currentStep < 4) {
-                    // Hide current step
                     document.getElementById(`step${this.currentStep}`).classList.remove('active');
-                    
-                    // Show next step
                     this.currentStep++;
                     document.getElementById(`step${this.currentStep}`).classList.add('active');
                     
-                    // Calculate and show results on step 4
                     if (this.currentStep === 4) {
                         this.calculateResults();
                         this.displayResults();
                         
-                        // AUTO-SCROLL TO RESULTS
                         setTimeout(() => {
-                            const resultsSection = document.querySelector('.results-section');
+                            const resultsSection = document.querySelector('.algorithm-section');
                             if (resultsSection) {
-                                resultsSection.scrollIntoView({ 
-                                    behavior: 'smooth', 
-                                    block: 'start' 
-                                });
+                                resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                             }
                         }, 100);
                     } else {
-                        // Scroll to top for other steps
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                     }
                 }
@@ -1823,8 +1255,6 @@
                     document.getElementById(`step${this.currentStep}`).classList.remove('active');
                     this.currentStep--;
                     document.getElementById(`step${this.currentStep}`).classList.add('active');
-                    
-                    // Scroll to top
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
             }
@@ -1836,209 +1266,123 @@
                 document.getElementById(`step${this.currentStep}`).classList.add('active');
             }
 
-            async calculateResults() {
+            calculateResults() {
                 const t = ClinicalDatabase[this.currentLang];
                 
-                // Calculate CAT total
+                // CAT Calculation
                 const catScores = Object.values(this.assessmentData.steps.cat);
                 const catTotal = catScores.reduce((sum, score) => sum + (score || 0), 0);
                 
-                // Determine CAT status
+                // Algorithm calculations for display
+                this.algorithmCalculations = {
+                    cat: {
+                        scores: catScores,
+                        total: catTotal,
+                        calculation: catScores.join(' + ') + ' = ' + catTotal + '/40'
+                    },
+                    mmrc: this.assessmentData.steps.mmrc,
+                    unfavorableCount: this.calculateUnfavorableCount()
+                };
+                
+                // Simple classification for display only
                 let catStatus, catColor;
                 if (catTotal <= 10) {
-                    catStatus = t.lowImpact;
+                    catStatus = "Low Impact";
                     catColor = 'good';
                 } else if (catTotal <= 20) {
-                    catStatus = t.mediumImpact;
+                    catStatus = "Medium Impact";
                     catColor = 'moderate';
                 } else if (catTotal <= 30) {
-                    catStatus = t.highImpact;
+                    catStatus = "High Impact";
                     catColor = 'poor';
                 } else {
-                    catStatus = t.veryHighImpact;
+                    catStatus = "Very High Impact";
                     catColor = 'severe';
                 }
                 
-                // Calculate GesEPOC classification
-                let unfavorableCount = 0;
-                if (this.assessmentData.steps.gesepoc.stability === "worse") unfavorableCount++;
-                if (this.assessmentData.steps.gesepoc.exacerbations === "yes") unfavorableCount++;
-                if (this.assessmentData.steps.gesepoc.sputum === "colored") unfavorableCount++;
-                if (this.assessmentData.steps.gesepoc.rescue === "high") unfavorableCount++;
-                if (this.assessmentData.steps.gesepoc.activity === "low") unfavorableCount++;
-                if (this.assessmentData.steps.gesepoc.fev1 === "<50") unfavorableCount++;
-                if (this.assessmentData.steps.mmrc >= 2) unfavorableCount++;
-                if (catTotal >= 20) unfavorableCount++;
-                
-                let gesepocClass, gesepocInterpretation;
-                if (unfavorableCount <= 2) {
-                    gesepocClass = "A";
-                    gesepocInterpretation = t.controlled;
-                } else if (unfavorableCount <= 4) {
-                    gesepocClass = "B";
-                    gesepocInterpretation = t.partiallyControlled;
-                } else if (unfavorableCount <= 6) {
-                    gesepocClass = "C";
-                    gesepocInterpretation = t.poorlyControlled;
-                } else {
-                    gesepocClass = "D";
-                    gesepocInterpretation = t.uncontrolled;
-                }
-                
                 this.assessmentData.results = {
-                    cat: {
-                        score: catTotal,
-                        status: catStatus,
-                        color: catColor,
-                        maxScore: 40
-                    },
-                    mmrc: {
-                        grade: this.assessmentData.steps.mmrc,
-                        interpretation: `Grade ${this.assessmentData.steps.mmrc}`
-                    },
-                    gesepoc: {
-                        class: gesepocClass,
-                        interpretation: gesepocInterpretation,
-                        unfavorableCount: unfavorableCount,
-                        color: catColor
-                    },
+                    cat: { score: catTotal, status: catStatus, color: catColor },
+                    mmrc: { grade: this.assessmentData.steps.mmrc },
                     timestamp: new Date().toLocaleString(this.currentLang === 'es' ? 'es-ES' : 'en-US'),
-                    recommendations: this.generateRecommendations(catTotal, this.assessmentData.steps.mmrc, gesepocClass)
+                    algorithm: this.algorithmCalculations
                 };
                 
-                // Save to database if consented
-                if (this.assessmentData.consent.saveLocal) {
-                    const patientData = {
-                        ...this.assessmentData,
-                        consent: { ...this.assessmentData.consent }
-                    };
-                    await this.db.savePatient(patientData);
-                }
+                // Save to database
+                this.db.savePatient({
+                    ...this.assessmentData,
+                    timestamp: new Date().toISOString()
+                });
             }
 
-            generateRecommendations(catScore, mmrcGrade, gesepocClass) {
-                const t = ClinicalDatabase[this.currentLang];
-                const recommendations = [];
+            calculateUnfavorableCount() {
+                let count = 0;
+                if (this.assessmentData.steps.gesepoc.stability === "worse") count++;
+                if (this.assessmentData.steps.gesepoc.exacerbations === "yes") count++;
+                if (this.assessmentData.steps.gesepoc.sputum === "colored") count++;
+                if (this.assessmentData.steps.gesepoc.rescue === "high") count++;
+                if (this.assessmentData.steps.mmrc >= 2) count++;
                 
-                if (this.currentLang === 'en') {
-                    if (catScore >= 25) {
-                        recommendations.push("High symptom burden - consider treatment optimization and pulmonary rehabilitation referral");
-                    } else if (catScore >= 15) {
-                        recommendations.push("Moderate symptoms - schedule regular 3-6 month follow-up");
-                    }
-                    
-                    if (mmrcGrade >= 3) {
-                        recommendations.push("Severe dyspnea - evaluate for supplemental oxygen and rehabilitation");
-                    } else if (mmrcGrade >= 2) {
-                        recommendations.push("Moderate dyspnea - consider breathing techniques and activity pacing");
-                    }
-                    
-                    if (gesepocClass === "D") {
-                        recommendations.push("Uncontrolled COPD - urgent clinical review required");
-                    } else if (gesepocClass === "C") {
-                        recommendations.push("Poor control - consider step-up in therapy");
-                    }
-                    
-                    recommendations.push("Review inhaler technique at next visit");
-                    recommendations.push("Provide written action plan for exacerbations");
-                } else {
-                    if (catScore >= 25) {
-                        recommendations.push("Alta carga de síntomas - considerar optimización de tratamiento y referencia a rehabilitación pulmonar");
-                    } else if (catScore >= 15) {
-                        recommendations.push("Síntomas moderados - programar seguimiento regular cada 3-6 meses");
-                    }
-                    
-                    if (mmrcGrade >= 3) {
-                        recommendations.push("Disnea severa - evaluar para oxigenoterapia suplementaria y rehabilitación");
-                    } else if (mmrcGrade >= 2) {
-                        recommendations.push("Disnea moderada - considerar técnicas de respiración y ritmo de actividades");
-                    }
-                    
-                    if (gesepocClass === "D") {
-                        recommendations.push("EPOC no controlada - se requiere revisión clínica urgente");
-                    } else if (gesepocClass === "C") {
-                        recommendations.push("Control pobre - considerar escalada de terapia");
-                    }
-                    
-                    recommendations.push("Revisar técnica de inhalador en la próxima visita");
-                    recommendations.push("Proporcionar plan de acción por escrito para exacerbaciones");
-                }
+                const catScores = Object.values(this.assessmentData.steps.cat);
+                const catTotal = catScores.reduce((sum, score) => sum + (score || 0), 0);
+                if (catTotal >= 20) count++;
                 
-                return recommendations;
+                return count;
             }
 
             displayResults() {
-                const t = ClinicalDatabase[this.currentLang];
                 const results = this.assessmentData.results;
+                const algo = this.algorithmCalculations;
                 
-                let html = `
-                    <h3>${t.resultsTitle}</h3>
-                    <div class="results-grid">
-                        <div class="result-card" style="background: var(--${results.cat.color})">
-                            <h4>${t.catScore}</h4>
-                            <h2>${results.cat.score}/40</h2>
-                            <p>${results.cat.status}</p>
-                        </div>
-                        <div class="result-card" style="background: var(--primary-clinical)">
-                            <h4>${t.mmrcGrade}</h4>
-                            <h2>${results.mmrc.grade}</h2>
-                            <p>Grade ${results.mmrc.grade}</p>
-                        </div>
-                        <div class="result-card" style="background: var(--${results.gesepoc.color})">
-                            <h4>${t.gesepocClass}</h4>
-                            <h2>${results.gesepoc.class}</h2>
-                            <p>${results.gesepoc.interpretation}</p>
-                        </div>
+                // Display scores
+                document.getElementById('resultsDisplay').innerHTML = `
+                    <div class="result-card" style="background: var(--${results.cat.color})">
+                        <h3>CAT Score</h3>
+                        <div style="font-size: 3rem; font-weight: 700;">${results.cat.score}/40</div>
+                        <div>${results.cat.status}</div>
                     </div>
                     
-                    <div class="card" style="margin-top: var(--space-xl);">
-                        <h4><i class="fas fa-stethoscope"></i> ${t.recommendations}</h4>
-                        <ul style="margin-top: var(--space-md);">
-                            ${results.recommendations.map(rec => `<li>${rec}</li>`).join('')}
-                        </ul>
+                    <div class="result-card" style="background: var(--primary-clinical)">
+                        <h3>mMRC Grade</h3>
+                        <div style="font-size: 3rem; font-weight: 700;">${results.mmrc.grade}</div>
+                        <div>Grade ${results.mmrc.grade}</div>
                     </div>
                     
-                    <p style="margin-top: var(--space-md); color: var(--text-secondary);">
-                        <i class="fas fa-clock"></i> ${results.timestamp}
-                    </p>
+                    <div class="result-card" style="background: var(--moderate)">
+                        <h3>Unfavorable Criteria</h3>
+                        <div style="font-size: 3rem; font-weight: 700;">${algo.unfavorableCount}/6</div>
+                        <div>Clinical Parameters</div>
+                    </div>
                 `;
                 
-                document.getElementById('resultsDisplay').innerHTML = html;
-                
-                // Show QR generator if consented to share
-                if (this.assessmentData.consent.shareWithClinician) {
-                    document.getElementById('qrGenerator').style.display = 'block';
-                }
-            }
-
-            async generateQRCode() {
-                const results = this.assessmentData.results;
-                const qrData = {
-                    type: "COPD Clinical Assessment",
-                    date: results.timestamp,
-                    language: this.currentLang,
-                    scores: {
-                        CAT: results.cat.score,
-                        mMRC: results.mmrc.grade,
-                        GesEPOC: results.gesepoc.class
-                    },
-                    status: results.cat.status,
-                    note: "Clinically validated assessment results"
-                };
-                
-                try {
-                    const qrContainer = document.getElementById('qrcode');
-                    qrContainer.innerHTML = '';
+                // Display algorithm calculations
+                document.getElementById('algorithmCalculations').innerHTML = `
+                    <div class="algorithm-step">
+                        <strong>1. CAT Score Calculation:</strong>
+                        <div class="algorithm-formula">${algo.cat.calculation}</div>
+                        <div>Range: 0-40 (Higher = Greater symptom impact)</div>
+                    </div>
                     
-                    QRCode.toCanvas(qrContainer, JSON.stringify(qrData, null, 2), {
-                        width: 200,
-                        margin: 2,
-                        color: { dark: '#0f172a', light: '#ffffff' }
-                    });
+                    <div class="algorithm-step">
+                        <strong>2. mMRC Grade:</strong>
+                        <div class="algorithm-formula">Selected Grade: ${algo.mmrc}</div>
+                        <div>Range: 0-4 (Higher = Greater dyspnea)</div>
+                    </div>
                     
-                } catch (error) {
-                    console.error('QR generation failed:', error);
-                }
+                    <div class="algorithm-step">
+                        <strong>3. Unfavorable Criteria Count:</strong>
+                        <div class="algorithm-formula">Total: ${algo.unfavorableCount}/6 criteria met</div>
+                        <div>Criteria: Clinical stability "worse", Recent exacerbations, Colored sputum, 
+                        High rescue use (≥3x/week), mMRC ≥ 2, CAT ≥ 20</div>
+                    </div>
+                    
+                    <div class="algorithm-step">
+                        <strong>4. Classification Algorithm:</strong>
+                        <div class="algorithm-formula">Based on GesEPOC 2021 Guidelines</div>
+                        <div>• 0-2 unfavorable criteria → Class A</div>
+                        <div>• 3-4 unfavorable criteria → Class B</div>
+                        <div>• 5-6 unfavorable criteria → Class C</div>
+                    </div>
+                `;
             }
 
             async generatePDF() {
@@ -2046,192 +1390,99 @@
                     const { jsPDF } = window.jspdf;
                     const doc = new jsPDF();
                     const results = this.assessmentData.results;
-                    const t = ClinicalDatabase[this.currentLang];
+                    const algo = this.algorithmCalculations;
                     
                     // Header
-                    doc.setFontSize(20);
+                    doc.setFontSize(16);
                     doc.setTextColor(37, 99, 235);
-                    doc.text(t.resultsTitle, 20, 20);
+                    doc.text("COPD Assessment Results", 20, 20);
                     
                     doc.setFontSize(10);
                     doc.setTextColor(100, 100, 100);
-                    doc.text(`${results.timestamp}`, 20, 30);
+                    doc.text(`Generated: ${results.timestamp}`, 20, 30);
                     
                     // Scores
-                    const colors = {
-                        good: [34, 197, 94],
-                        moderate: [245, 158, 11],
-                        poor: [239, 68, 68],
-                        severe: [220, 38, 38],
-                        primary: [37, 99, 235]
-                    };
-                    
-                    let y = 50;
-                    
-                    // CAT Score
-                    const catColor = colors[results.cat.color] || colors.moderate;
-                    doc.setFillColor(...catColor);
-                    doc.roundedRect(20, y, 55, 25, 3, 3, 'F');
-                    doc.setTextColor(255, 255, 255);
                     doc.setFontSize(12);
-                    doc.text(t.catScore, 25, y + 8);
-                    doc.setFontSize(16);
-                    doc.text(`${results.cat.score}/40`, 25, y + 18);
-                    
-                    // mMRC
-                    doc.setFillColor(...colors.primary);
-                    doc.roundedRect(80, y, 55, 25, 3, 3, 'F');
-                    doc.text(t.mmrcGrade, 85, y + 8);
-                    doc.setFontSize(16);
-                    doc.text(`${results.mmrc.grade}`, 85, y + 18);
-                    
-                    // GesEPOC
-                    const gesepocColor = colors[results.gesepoc.color] || colors.moderate;
-                    doc.setFillColor(...gesepocColor);
-                    doc.roundedRect(140, y, 55, 25, 3, 3, 'F');
-                    doc.text(t.gesepocClass, 145, y + 8);
-                    doc.setFontSize(16);
-                    doc.text(results.gesepoc.class, 145, y + 18);
-                    
-                    // Interpretation
-                    y += 40;
                     doc.setTextColor(0, 0, 0);
-                    doc.setFontSize(12);
-                    doc.text("Clinical Interpretation:", 20, y);
+                    doc.text("Assessment Scores:", 20, 50);
                     
-                    y += 10;
                     doc.setFontSize(10);
-                    doc.text(`• ${t.catScore}: ${results.cat.status} (${results.cat.score}/40)`, 25, y);
-                    y += 7;
-                    doc.text(`• ${t.mmrcGrade}: Grade ${results.mmrc.grade}`, 25, y);
-                    y += 7;
-                    doc.text(`• ${t.gesepocClass}: ${results.gesepoc.interpretation}`, 25, y);
-                    y += 7;
-                    doc.text(`• Unfavorable Criteria: ${results.gesepoc.unfavorableCount}/8`, 25, y);
+                    doc.text(`• CAT Score: ${results.cat.score}/40 (${results.cat.status})`, 25, 60);
+                    doc.text(`• mMRC Grade: ${results.mmrc.grade}`, 25, 67);
+                    doc.text(`• Unfavorable Criteria: ${algo.unfavorableCount}/6`, 25, 74);
                     
-                    // Recommendations
-                    y += 15;
+                    // Algorithm
                     doc.setFontSize(12);
-                    doc.text(t.recommendations + ":", 20, y);
+                    doc.text("Algorithm Calculations:", 20, 90);
                     
-                    y += 10;
-                    results.recommendations.forEach((rec, index) => {
-                        if (y > 250) {
-                            doc.addPage();
-                            y = 20;
-                        }
-                        doc.setFontSize(10);
-                        doc.text(`${index + 1}. ${rec}`, 25, y);
-                        y += 7;
-                    });
+                    doc.setFontSize(10);
+                    let y = 100;
+                    doc.text(`1. CAT Calculation: ${algo.cat.calculation}`, 25, y);
+                    y += 7;
+                    doc.text(`2. mMRC Grade: ${algo.mmrc}`, 25, y);
+                    y += 7;
+                    doc.text(`3. Unfavorable Criteria: ${algo.unfavorableCount}/6`, 25, y);
+                    y += 7;
+                    doc.text("4. Classification: Based on GesEPOC 2021", 25, y);
                     
-                    // Footer
-                    doc.setFontSize(8);
-                    doc.setTextColor(100, 100, 100);
-                    doc.text("Clinical assessment tool - For professional use only", 20, 280);
-                    
-                    // Save
-                    const filename = this.currentLang === 'es' 
-                        ? `Evaluacion-EPOC-${new Date().toISOString().slice(0, 10)}.pdf`
-                        : `COPD-Assessment-${new Date().toISOString().slice(0, 10)}.pdf`;
-                    
-                    doc.save(filename);
+                    doc.save(`COPD-Assessment-${new Date().toISOString().slice(0, 10)}.pdf`);
                     
                 } catch (error) {
                     console.error('PDF generation failed:', error);
-                    alert(this.currentLang === 'es' 
-                        ? 'Error al generar PDF'
-                        : 'Error generating PDF'
-                    );
                 }
             }
 
             resetAssessment() {
                 this.currentStep = 1;
                 this.assessmentData = {
-                    consent: {
-                        assessment: false,
-                        saveLocal: document.getElementById('consentSave').checked,
-                        shareWithClinician: document.getElementById('consentShare').checked
-                    },
                     timestamp: null,
                     language: this.currentLang,
-                    steps: {
-                        mmrc: null,
-                        cat: {},
-                        gesepoc: {}
-                    },
+                    steps: { mmrc: null, cat: {}, gesepoc: {} },
                     results: null
                 };
                 
-                // Reset UI
                 document.getElementById('assessmentContainer').classList.add('hidden');
                 document.getElementById('welcomeScreen').classList.remove('hidden');
-                document.getElementById('qrGenerator').style.display = 'none';
-                document.getElementById('pdfPreview').classList.add('hidden');
-                
-                // Reset steps
                 this.renderCurrentStep();
                 
-                // Reset buttons
                 document.getElementById('nextStep1').disabled = true;
                 document.getElementById('nextStep2').disabled = true;
                 document.getElementById('nextStep3').disabled = true;
                 
-                // Reset form elements
-                document.querySelectorAll('.cat-slider').forEach(slider => {
-                    slider.value = 0;
-                });
-                document.querySelectorAll('.option-btn').forEach(btn => {
-                    btn.classList.remove('selected');
-                });
-                document.querySelectorAll('.mmrc-option').forEach(opt => {
-                    opt.style.background = '';
-                });
+                document.querySelectorAll('.cat-slider').forEach(slider => slider.value = 0);
+                document.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
+                document.querySelectorAll('.mmrc-option').forEach(opt => opt.classList.remove('selected'));
                 
-                // Scroll to top
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
 
             async loadClinicianDashboard() {
-                const patients = await this.db.getPatients(true);
+                const patients = await this.db.getPatients();
                 
                 let html = '';
                 if (patients.length === 0) {
-                    html = `
-                        <div class="card">
-                            <h3>${this.currentLang === 'es' ? 'Sin pacientes' : 'No patients'}</h3>
-                            <p>${this.currentLang === 'es' 
-                                ? 'Los pacientes que consientan compartir resultados aparecerán aquí.' 
-                                : 'Patients who consent to share results will appear here.'}</p>
-                        </div>
-                    `;
+                    html = `<div class="question-card"><p>No patient assessments found.</p></div>`;
                 } else {
                     patients.forEach(patient => {
                         const results = patient.results;
                         if (!results) return;
                         
                         const statusClass = results.cat?.color || 'moderate';
-                        const statusText = results.cat?.status || 'N/A';
-                        const date = new Date(patient.timestamp).toLocaleDateString(this.currentLang === 'es' ? 'es-ES' : 'en-US');
+                        const date = new Date(patient.timestamp).toLocaleDateString();
                         
                         html += `
-                            <div class="patient-card ${statusClass}" onclick="window.copdSuite.showPatientDetails(${patient.id})">
-                                <div class="patient-info">
+                            <div class="patient-card ${statusClass}" onclick="window.copdApp.showPatientDetails(${patient.id})">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-sm);">
                                     <div>
-                                        <strong>${this.currentLang === 'es' ? 'Evaluación' : 'Assessment'} #${patient.id}</strong><br>
+                                        <strong>Assessment #${patient.id}</strong><br>
                                         <small>${date}</small>
                                     </div>
-                                    <span class="patient-status status-${statusClass}">
-                                        ${statusText}
+                                    <span style="background: var(--${statusClass}); color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.875rem;">
+                                        ${results.cat?.score || 'N/A'}/40
                                     </span>
                                 </div>
-                                <div style="margin-top: var(--space-sm);">
-                                    <small>
-                                        ${ClinicalDatabase[this.currentLang].catScore}: ${results.cat?.score || 'N/A'}/40 | 
-                                        ${ClinicalDatabase[this.currentLang].mmrcGrade}: ${results.mmrc?.grade || 'N/A'} | 
-                                        ${ClinicalDatabase[this.currentLang].gesepocClass}: ${results.gesepoc?.class || 'N/A'}
-                                    </small>
+                                <div>
+                                    <small>CAT: ${results.cat?.score || 'N/A'}/40 | mMRC: ${results.mmrc?.grade || 'N/A'}</small>
                                 </div>
                             </div>
                         `;
@@ -2239,221 +1490,83 @@
                 }
                 
                 document.getElementById('patientsGrid').innerHTML = html;
-                this.updatePracticeStats();
+                this.updatePracticeStats(patients);
             }
 
-            async updatePracticeStats() {
-                const stats = await this.db.getPracticeStats();
-                const t = ClinicalDatabase[this.currentLang];
+            updatePracticeStats(patients) {
+                const stats = {
+                    total: patients.length,
+                    avgCAT: 0,
+                    avgMMRC: 0
+                };
+                
+                let totalCAT = 0, totalMMRC = 0, count = 0;
+                
+                patients.forEach(patient => {
+                    if (patient.results) {
+                        if (patient.results.cat?.score) {
+                            totalCAT += patient.results.cat.score;
+                            count++;
+                        }
+                        if (patient.results.mmrc?.grade !== undefined) {
+                            totalMMRC += patient.results.mmrc.grade;
+                        }
+                    }
+                });
+                
+                stats.avgCAT = count > 0 ? Math.round(totalCAT / count) : 0;
+                stats.avgMMRC = count > 0 ? (totalMMRC / count).toFixed(1) : 0;
                 
                 document.getElementById('practiceStats').innerHTML = `
                     <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-md);">
                         <div style="text-align: center; padding: var(--space-sm); background: rgba(37, 99, 235, 0.1); border-radius: var(--radius-md);">
                             <h4>${stats.total}</h4>
-                            <small>${this.currentLang === 'es' ? 'Total Pacientes' : 'Total Patients'}</small>
+                            <small>Total Assessments</small>
                         </div>
                         <div style="text-align: center; padding: var(--space-sm); background: rgba(34, 197, 94, 0.1); border-radius: var(--radius-md);">
                             <h4>${stats.avgCAT}</h4>
-                            <small>${this.currentLang === 'es' ? 'Promedio CAT' : 'Avg CAT Score'}</small>
+                            <small>Avg CAT Score</small>
                         </div>
                         <div style="text-align: center; padding: var(--space-sm); background: rgba(245, 158, 11, 0.1); border-radius: var(--radius-md);">
                             <h4>${stats.avgMMRC}</h4>
-                            <small>${this.currentLang === 'es' ? 'Promedio mMRC' : 'Avg mMRC'}</small>
+                            <small>Avg mMRC</small>
                         </div>
                         <div style="text-align: center; padding: var(--space-sm); background: rgba(239, 68, 68, 0.1); border-radius: var(--radius-md);">
-                            <h4>${stats.uncontrolled}</h4>
-                            <small>${this.currentLang === 'es' ? 'No Controlados' : 'Uncontrolled'}</small>
+                            <h4>${Math.round(stats.avgCAT / 40 * 100)}%</h4>
+                            <small>Symptom Burden</small>
                         </div>
-                    </div>
-                    <div style="margin-top: var(--space-md); text-align: center;">
-                        <small style="color: var(--text-secondary);">
-                            ${this.currentLang === 'es' ? 'Evaluaciones recientes (7 días)' : 'Recent assessments (7 days)'}: ${stats.recent}
-                        </small>
                     </div>
                 `;
             }
 
             async showPatientDetails(patientId) {
-                const patient = await this.db.getPatient(patientId);
+                const patients = await this.db.getPatients();
+                const patient = patients.find(p => p.id === patientId);
+                
                 if (!patient) return;
                 
                 const results = patient.results;
-                const t = ClinicalDatabase[this.currentLang];
                 
                 document.getElementById('modalContent').innerHTML = `
-                    <h2>${this.currentLang === 'es' ? 'Detalles de la Evaluación' : 'Assessment Details'}</h2>
-                    <div class="card">
-                        <h3>${this.currentLang === 'es' ? 'Resumen de Resultados' : 'Results Summary'}</h3>
-                        <p><strong>${this.currentLang === 'es' ? 'Fecha' : 'Date'}:</strong> ${new Date(patient.timestamp).toLocaleString()}</p>
-                        <p><strong>${t.catScore}:</strong> ${results?.cat?.score || 'N/A'}/40 (${results?.cat?.status || 'N/A'})</p>
-                        <p><strong>${t.mmrcGrade}:</strong> ${results?.mmrc?.grade || 'N/A'}</p>
-                        <p><strong>${t.gesepocClass}:</strong> ${results?.gesepoc?.class || 'N/A'} (${results?.gesepoc?.interpretation || ''})</p>
-                        <p><strong>${this.currentLang === 'es' ? 'Criterios Desfavorables' : 'Unfavorable Criteria'}:</strong> ${results?.gesepoc?.unfavorableCount || 'N/A'}/8</p>
-                        <p><strong>${this.currentLang === 'es' ? 'Consentimiento para Compartir' : 'Sharing Consent'}:</strong> ${patient.consent?.shareWithClinician ? '✓' : '✗'}</p>
+                    <h2>Assessment Details</h2>
+                    <div class="question-card">
+                        <h3>Results Summary</h3>
+                        <p><strong>Date:</strong> ${new Date(patient.timestamp).toLocaleString()}</p>
+                        <p><strong>CAT Score:</strong> ${results?.cat?.score || 'N/A'}/40 (${results?.cat?.status || 'N/A'})</p>
+                        <p><strong>mMRC Grade:</strong> ${results?.mmrc?.grade || 'N/A'}</p>
+                        <p><strong>Unfavorable Criteria:</strong> ${results?.algorithm?.unfavorableCount || 'N/A'}/6</p>
                     </div>
-                    <div class="card">
-                        <h3>${t.recommendations}</h3>
-                        <ul>
-                            ${results?.recommendations?.map(rec => `<li>${rec}</li>`).join('') || '<li>N/A</li>'}
-                        </ul>
-                    </div>
-                    <div style="display: flex; gap: var(--space-md); margin-top: var(--space-lg);">
-                        <button class="btn btn-primary" onclick="window.copdSuite.generateClinicalPDF(${patientId})">
-                            <i class="fas fa-file-pdf"></i>
-                            ${this.currentLang === 'es' ? 'Informe Clínico' : 'Clinical Report'}
-                        </button>
-                        <button class="btn btn-secondary" onclick="window.copdSuite.deletePatientRecord(${patientId})">
-                            <i class="fas fa-trash"></i>
-                            ${this.currentLang === 'es' ? 'Eliminar' : 'Delete'}
-                        </button>
+                    <div class="question-card">
+                        <h3>Algorithm Verification</h3>
+                        <pre style="background: rgba(0,0,0,0.1); padding: var(--space-md); border-radius: var(--radius-sm); overflow-x: auto; font-size: 0.9rem;">
+CAT Calculation: ${results?.algorithm?.cat?.calculation || 'N/A'}
+mMRC Grade: ${results?.algorithm?.mmrc || 'N/A'}
+Unfavorable Count: ${results?.algorithm?.unfavorableCount || 'N/A'}/6
+                        </pre>
                     </div>
                 `;
                 
                 document.getElementById('resultsModal').classList.add('active');
-            }
-
-            async generateClinicalPDF(patientId) {
-                const patient = await this.db.getPatient(patientId);
-                if (!patient) return;
-                
-                const { jsPDF } = window.jspdf;
-                const doc = new jsPDF();
-                const results = patient.results;
-                const t = ClinicalDatabase[this.currentLang];
-                
-                // Header
-                doc.setFontSize(16);
-                doc.setTextColor(37, 99, 235);
-                doc.text(this.currentLang === 'es' ? 'Informe Clínico de EPOC' : 'COPD Clinical Report', 20, 20);
-                
-                doc.setFontSize(10);
-                doc.setTextColor(100, 100, 100);
-                doc.text(`${this.currentLang === 'es' ? 'ID del Paciente' : 'Patient ID'}: ${patientId}`, 20, 30);
-                doc.text(`${new Date(patient.timestamp).toLocaleString()}`, 20, 35);
-                
-                // Results
-                doc.setFontSize(12);
-                doc.setTextColor(0, 0, 0);
-                doc.text(this.currentLang === 'es' ? 'Resultados de la Evaluación:' : 'Assessment Results:', 20, 50);
-                
-                doc.setFontSize(10);
-                let y = 60;
-                doc.text(`• ${t.catScore}: ${results?.cat?.score || 'N/A'}/40 (${results?.cat?.status || 'N/A'})`, 25, y);
-                y += 7;
-                doc.text(`• ${t.mmrcGrade}: ${results?.mmrc?.grade || 'N/A'}`, 25, y);
-                y += 7;
-                doc.text(`• ${t.gesepocClass}: ${results?.gesepoc?.class || 'N/A'} (${results?.gesepoc?.interpretation || 'N/A'})`, 25, y);
-                y += 7;
-                doc.text(`• ${this.currentLang === 'es' ? 'Criterios Desfavorables' : 'Unfavorable Criteria'}: ${results?.gesepoc?.unfavorableCount || 'N/A'}/8`, 25, y);
-                y += 10;
-                
-                // Recommendations
-                doc.setFontSize(12);
-                doc.text(t.recommendations + ":", 20, y);
-                y += 10;
-                
-                doc.setFontSize(10);
-                if (results?.recommendations) {
-                    results.recommendations.forEach((rec, index) => {
-                        if (y > 250) {
-                            doc.addPage();
-                            y = 20;
-                        }
-                        doc.text(`${index + 1}. ${rec}`, 25, y);
-                        y += 7;
-                    });
-                }
-                
-                // Footer
-                doc.setFontSize(8);
-                doc.setTextColor(100, 100, 100);
-                doc.text("Confidential - For clinical use only", 20, 280);
-                
-                doc.save(`Clinical-Report-${patientId}.pdf`);
-            }
-
-            async deletePatientRecord(patientId) {
-                const confirmMsg = this.currentLang === 'es' 
-                    ? '¿Eliminar este registro de paciente? Esta acción no se puede deshacer.'
-                    : 'Delete this patient record? This action cannot be undone.';
-                
-                if (confirm(confirmMsg)) {
-                    await this.db.deletePatient(patientId);
-                    document.getElementById('resultsModal').classList.remove('active');
-                    this.loadClinicianDashboard();
-                }
-            }
-
-            async showConsentSettings() {
-                const t = ClinicalDatabase[this.currentLang];
-                
-                document.getElementById('settingsContent').innerHTML = `
-                    <h2>${this.currentLang === 'es' ? 'Configuración de Privacidad' : 'Privacy Settings'}</h2>
-                    <div class="card">
-                        <h3>${this.currentLang === 'es' ? 'Gestión de Datos' : 'Data Management'}</h3>
-                        <p>${this.currentLang === 'es' 
-                            ? 'Control sobre cómo se almacenan y comparten sus datos:' 
-                            : 'Control how your data is stored and shared:'}</p>
-                        
-                        <div class="consent-option">
-                            <div>
-                                <strong>${this.currentLang === 'es' ? 'Almacenamiento Local' : 'Local Storage'}</strong><br>
-                                <small>${this.currentLang === 'es' 
-                                    ? 'Todos los datos se almacenan localmente en su dispositivo usando IndexedDB' 
-                                    : 'All data is stored locally on your device using IndexedDB'}</small>
-                            </div>
-                        </div>
-                        
-                        <div class="consent-option">
-                            <div>
-                                <strong>${this.currentLang === 'es' ? 'Sin Servidores' : 'No Server Storage'}</strong><br>
-                                <small>${this.currentLang === 'es' 
-                                    ? 'No se envían datos a ningún servidor a menos que usted lo comparta explícitamente' 
-                                    : 'No data is sent to any server unless you explicitly share it'}</small>
-                            </div>
-                        </div>
-                        
-                        <div class="consent-option">
-                            <div>
-                                <strong>${this.currentLang === 'es' ? 'Código QR para Compartir' : 'QR Code Sharing'}</strong><br>
-                                <small>${this.currentLang === 'es' 
-                                    ? 'Comparta resultados mediante código QR que contiene solo datos de evaluación' 
-                                    : 'Share results via QR code that contains only assessment data'}</small>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="card">
-                        <h3>${this.currentLang === 'es' ? 'Limpiar Todos los Datos' : 'Clear All Data'}</h3>
-                        <p>${this.currentLang === 'es' 
-                            ? 'Advertencia: Esto eliminará todas las evaluaciones de este dispositivo.' 
-                            : 'Warning: This will delete all assessments from this device.'}</p>
-                        <button class="btn btn-secondary" onclick="window.copdSuite.clearAllData()">
-                            <i class="fas fa-trash"></i>
-                            ${this.currentLang === 'es' ? 'Limpiar Todos los Datos' : 'Clear All Data'}
-                        </button>
-                    </div>
-                `;
-                
-                document.getElementById('settingsModal').classList.add('active');
-            }
-
-            async clearAllData() {
-                const confirmMsg = this.currentLang === 'es' 
-                    ? '¿Eliminar TODOS los datos de evaluación de este dispositivo? Esta acción no se puede deshacer.'
-                    : 'Delete ALL assessment data from this device? This action cannot be undone.';
-                
-                if (confirm(confirmMsg)) {
-                    await this.db.clearAllData();
-                    document.getElementById('settingsModal').classList.remove('active');
-                    alert(this.currentLang === 'es' 
-                        ? 'Todos los datos han sido eliminados.' 
-                        : 'All data has been cleared.');
-                    
-                    if (this.currentMode === 'clinician') {
-                        this.loadClinicianDashboard();
-                    }
-                }
             }
 
             async exportAllData() {
@@ -2461,63 +1574,18 @@
                 const dataStr = JSON.stringify(patients, null, 2);
                 const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
                 
-                const exportName = this.currentLang === 'es' 
-                    ? `datos-epoc-${new Date().toISOString().slice(0, 10)}.json`
-                    : `copd-data-${new Date().toISOString().slice(0, 10)}.json`;
-                
                 const link = document.createElement('a');
                 link.setAttribute('href', dataUri);
-                link.setAttribute('download', exportName);
+                link.setAttribute('download', `copd-data-${new Date().toISOString().slice(0, 10)}.json`);
                 link.click();
-            }
-
-            setupPWA() {
-                if ('serviceWorker' in navigator) {
-                    const swScript = `
-                        const CACHE_NAME = 'copd-clinical-v2';
-                        self.addEventListener('install', event => {
-                            event.waitUntil(
-                                caches.open(CACHE_NAME)
-                                    .then(cache => cache.addAll(['./']))
-                            );
-                        });
-                        self.addEventListener('fetch', event => {
-                            event.respondWith(
-                                caches.match(event.request)
-                                    .then(response => response || fetch(event.request))
-                            );
-                        });
-                    `;
-                    
-                    const swBlob = new Blob([swScript], { type: 'application/javascript' });
-                    const swURL = URL.createObjectURL(swBlob);
-                    navigator.serviceWorker.register(swURL);
-                }
-                
-                window.addEventListener('beforeinstallprompt', (e) => {
-                    e.preventDefault();
-                    window.deferredPrompt = e;
-                });
-            }
-
-            async installPWA() {
-                if (window.deferredPrompt) {
-                    window.deferredPrompt.prompt();
-                    const { outcome } = await window.deferredPrompt.userChoice;
-                    if (outcome === 'accepted') {
-                        console.log('PWA installed');
-                    }
-                    window.deferredPrompt = null;
-                }
             }
         }
 
-        // Initialize the complete application
+        // Initialize
         document.addEventListener('DOMContentLoaded', () => {
-            window.copdSuite = new CompleteCOPDSuite();
-            window.deferredPrompt = null;
+            window.copdApp = new COPDAssessmentSuite();
             
-            // Mobile menu setup
+            // Mobile menu
             if (window.innerWidth < 768) {
                 document.getElementById('menuToggle').classList.remove('hidden');
             }
@@ -2532,7 +1600,7 @@
                 }
             });
             
-            // Close menu when clicking outside
+            // Close menu on click outside
             document.addEventListener('click', (e) => {
                 const sidebar = document.getElementById('sidebar');
                 const menuToggle = document.getElementById('menuToggle');
